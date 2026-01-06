@@ -1,0 +1,68 @@
+# ================================================================
+# CRONTAB EXAMPLES untuk TikTok Auto System
+# ================================================================
+# 
+# CATATAN: Jika menggunakan systemd service, TIDAK perlu crontab
+# karena scheduler sudah built-in menggunakan APScheduler.
+#
+# Crontab ini OPSIONAL, hanya jika ingin menggunakan cron
+# sebagai pengganti APScheduler internal.
+# ================================================================
+
+# Edit crontab: crontab -e
+
+# ================================================================
+# OPSI 1: Jalankan main.py saat boot (jika tidak pakai systemd)
+# ================================================================
+@reboot cd /home/user/tiktok-auto && /home/user/tiktok-auto/venv/bin/python main.py >> /home/user/tiktok-auto/logs/cron.log 2>&1
+
+
+# ================================================================
+# OPSI 2: Jalankan scheduler terpisah (alternatif APScheduler)
+# Hanya gunakan jika APScheduler bermasalah
+# ================================================================
+
+# Posting jam 06:00 WIB setiap hari
+0 6 * * * cd /home/user/tiktok-auto && /home/user/tiktok-auto/venv/bin/python scheduler.py --run-now >> /home/user/tiktok-auto/logs/cron.log 2>&1
+
+# Posting jam 09:00 WIB setiap hari
+0 9 * * * cd /home/user/tiktok-auto && /home/user/tiktok-auto/venv/bin/python scheduler.py --run-now >> /home/user/tiktok-auto/logs/cron.log 2>&1
+
+# Posting jam 12:00 WIB setiap hari
+0 12 * * * cd /home/user/tiktok-auto && /home/user/tiktok-auto/venv/bin/python scheduler.py --run-now >> /home/user/tiktok-auto/logs/cron.log 2>&1
+
+
+# ================================================================
+# OPSI 3: Monitoring & Maintenance via Cron
+# ================================================================
+
+# Cek status setiap jam dan log
+0 * * * * cd /home/user/tiktok-auto && /home/user/tiktok-auto/venv/bin/python scheduler.py --status >> /home/user/tiktok-auto/logs/status.log 2>&1
+
+# Backup database setiap hari jam 00:00
+0 0 * * * cp /home/user/tiktok-auto/data/videos.db /home/user/tiktok-auto/data/videos_backup_$(date +\%Y\%m\%d).db
+
+# Hapus video lama (lebih dari 7 hari) setiap minggu
+0 2 * * 0 find /home/user/tiktok-auto/videos -type f -mtime +7 -delete
+
+# Rotate logs setiap bulan
+0 0 1 * * cd /home/user/tiktok-auto/logs && gzip -f app.log && touch app.log
+
+
+# ================================================================
+# OPSI 4: Health Check dengan Auto-Restart
+# ================================================================
+
+# Cek apakah main.py berjalan, restart jika mati (setiap 5 menit)
+*/5 * * * * pgrep -f "python main.py" > /dev/null || (cd /home/user/tiktok-auto && /home/user/tiktok-auto/venv/bin/python main.py >> /home/user/tiktok-auto/logs/cron.log 2>&1 &)
+
+
+# ================================================================
+# TIMEZONE
+# ================================================================
+# Pastikan timezone VPS sesuai:
+# sudo timedatectl set-timezone Asia/Jakarta
+#
+# Cek timezone:
+# timedatectl
+# ================================================================

@@ -1,0 +1,17 @@
+# Telegram Bot
+python-telegram-bot==20.7
+
+# Browser Automation
+playwright==1.40.0
+
+# Scheduler
+apscheduler==3.10.4
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Async Support
+aiofiles==23.2.1
+
+# Timezone
+pytz==2024.1

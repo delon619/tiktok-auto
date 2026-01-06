@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv
+venv
+env
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Debug screenshots
+debug_*.png
+
+# Local environment (will be set in CapRover)
+.env
+
+# Logs (will be created fresh)
+logs/*
+!logs/.gitkeep
+
+# Videos folder (will receive from Telegram)
+videos/*
+!videos/.gitkeep
+
+# Data folder (database will be created)
+data/*
+!data/.gitkeep
+
+# KEEP cookies folder - needed for TikTok login
+# cookies/ is NOT ignored - will be included in deploy

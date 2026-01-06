@@ -1,0 +1,37 @@
+# Environment files
+.env
+
+# Cookies (sensitive)
+cookies/
+
+# Video storage
+videos/
+
+# Database
+data/
+
+# Logs
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Debug screenshots
+debug_*.png
+
+# OS
+.DS_Store
+Thumbs.db
