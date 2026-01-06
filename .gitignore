@@ -1,8 +1,8 @@
 # Environment files
 .env
 
-# Cookies (sensitive)
-cookies/
+# Cookies - IMPORTANT: Include for deploy!
+# cookies/  # COMMENTED OUT - cookies needed for TikTok login
 
 # Video storage
 videos/
