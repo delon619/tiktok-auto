@@ -56,13 +56,34 @@ class TikTokAutoSystem:
     
     async def _run_telegram_bot(self):
         """Jalankan Telegram bot"""
+        from telegram.error import Conflict
+        
         self.telegram_app = create_bot_application()
         
         await self.telegram_app.initialize()
         await self.telegram_app.start()
-        await self.telegram_app.updater.start_polling(drop_pending_updates=True)
         
-        logger.info("Telegram bot started!")
+        # Drop pending updates and handle conflict with retry
+        max_retries = 3
+        retry_delay = 5  # seconds
+        
+        for attempt in range(max_retries):
+            try:
+                await self.telegram_app.updater.start_polling(
+                    drop_pending_updates=True,
+                    allowed_updates=["message", "callback_query"]
+                )
+                logger.info("Telegram bot started!")
+                break
+            except Conflict as e:
+                logger.warning(f"Bot conflict detected (attempt {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    logger.info(f"Waiting {retry_delay}s before retry...")
+                    await asyncio.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+                else:
+                    logger.error("Failed to start bot after max retries. Another instance may be running.")
+                    raise
         
         try:
             while self.running:

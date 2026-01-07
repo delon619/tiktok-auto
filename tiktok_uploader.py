@@ -149,7 +149,7 @@ class TikTokUploader:
         """Cek apakah masih login"""
         try:
             await self.page.goto(TIKTOK_UPLOAD_URL, wait_until="domcontentloaded", timeout=60000)
-            await self._random_delay(5, 7)  # Tunggu lebih lama
+            await self._random_delay(7, 10)  # Tunggu lebih lama untuk load penuh
             
             current_url = self.page.url
             logger.info(f"Current URL: {current_url}")
@@ -158,6 +158,14 @@ class TikTokUploader:
             if "login" in current_url.lower():
                 logger.warning("Session expired - redirect to login page")
                 return False
+            
+            # Screenshot untuk debug
+            try:
+                screenshot_path = COOKIES_DIR / "debug_login_check.png"
+                await self.page.screenshot(path=str(screenshot_path))
+                logger.info(f"Screenshot saved to {screenshot_path}")
+            except:
+                pass
             
             # Cek berbagai kemungkinan elemen upload
             selectors_to_try = [
@@ -246,19 +254,117 @@ class TikTokUploader:
             # Tunggu file input muncul
             logger.info("Waiting for upload input...")
             
-            # Input file di TikTok biasanya hidden, jadi kita langsung set tanpa tunggu visible
-            file_input = await self.page.query_selector('input[type="file"][accept*="video"]')
+            # Screenshot untuk debug
+            try:
+                await self.page.screenshot(path=str(COOKIES_DIR / "debug_before_input.png"))
+                logger.info("Screenshot saved: debug_before_input.png")
+            except:
+                pass
+            
+            # Cek apakah ada iframe yang perlu dimasuki
+            file_input = None
+            frames_to_check = [self.page] + self.page.frames
+            
+            # Selector yang lebih lengkap untuk input file
+            file_input_selectors = [
+                'input[type="file"][accept*="video"]',
+                'input[type="file"][accept*="mp4"]',
+                'input[type="file"]',
+                'input[name*="upload"]',
+                'input[name*="file"]',
+                '[data-e2e="upload-input"]',
+                '[class*="upload"] input[type="file"]',
+            ]
+            
+            # Coba cari di semua frame
+            for frame in frames_to_check:
+                try:
+                    for selector in file_input_selectors:
+                        try:
+                            file_input = await frame.query_selector(selector)
+                            if file_input:
+                                logger.info(f"Found file input with: {selector}")
+                                break
+                        except:
+                            continue
+                    if file_input:
+                        break
+                except:
+                    continue
+            
+            # Jika masih tidak ditemukan, tunggu lebih lama dan coba lagi
+            if not file_input:
+                logger.info("File input not found, waiting longer...")
+                await self._random_delay(5, 8)
+                
+                # Refresh halaman dan coba lagi
+                await self.page.reload(wait_until="domcontentloaded")
+                await self._random_delay(5, 8)
+                
+                frames_to_check = [self.page] + self.page.frames
+                for frame in frames_to_check:
+                    try:
+                        for selector in file_input_selectors:
+                            try:
+                                file_input = await frame.query_selector(selector)
+                                if file_input:
+                                    logger.info(f"Found file input after reload: {selector}")
+                                    break
+                            except:
+                                continue
+                        if file_input:
+                            break
+                    except:
+                        continue
+            
+            # Coba klik area upload dulu untuk memunculkan input
+            if not file_input:
+                logger.info("Trying to click upload area...")
+                upload_area_selectors = [
+                    '[class*="upload-card"]',
+                    '[class*="UploadCard"]',
+                    '[class*="upload-btn"]',
+                    '[class*="UploadBtn"]',
+                    'div[class*="upload"]',
+                    '[data-e2e="upload-card"]',
+                    'button:has-text("Select video")',
+                    'button:has-text("Pilih video")',
+                ]
+                
+                for selector in upload_area_selectors:
+                    try:
+                        upload_btn = await self.page.query_selector(selector)
+                        if upload_btn and await upload_btn.is_visible():
+                            await upload_btn.click()
+                            logger.info(f"Clicked upload area: {selector}")
+                            await self._random_delay(2, 3)
+                            
+                            # Coba cari file input lagi
+                            for fs in file_input_selectors:
+                                file_input = await self.page.query_selector(fs)
+                                if file_input:
+                                    break
+                            if file_input:
+                                break
+                    except:
+                        continue
+            
+            # Screenshot setelah pencarian
+            try:
+                await self.page.screenshot(path=str(COOKIES_DIR / "debug_after_search.png"))
+            except:
+                pass
             
             if not file_input:
-                file_input = await self.page.query_selector('input[type="file"]')
-            
-            if not file_input:
-                # Coba tunggu sebentar lagi
-                await self._random_delay(3, 5)
-                file_input = await self.page.query_selector('input[type="file"]')
-            
-            if not file_input:
-                return False, "Upload input tidak ditemukan"
+                # Log HTML untuk debug
+                try:
+                    html_content = await self.page.content()
+                    with open(str(COOKIES_DIR / "debug_page.html"), "w", encoding="utf-8") as f:
+                        f.write(html_content)
+                    logger.info("Page HTML saved to debug_page.html")
+                except:
+                    pass
+                return False, "Upload input tidak ditemukan - cek debug_page.html dan screenshot"
             
             # Upload file langsung (tanpa harus visible)
             logger.info("Uploading video file...")
