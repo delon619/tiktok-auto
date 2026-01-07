@@ -258,7 +258,24 @@ async def run_bot():
     # Initialize and start
     await application.initialize()
     await application.start()
-    await application.updater.start_polling(drop_pending_updates=True)
+    
+    # drop_pending_updates=True untuk abaikan pesan lama
+    # allowed_updates untuk filter update yang diterima
+    # Retry jika ada konflik dengan instance lain
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            await application.updater.start_polling(
+                drop_pending_updates=True,
+                allowed_updates=["message", "callback_query"]
+            )
+            break
+        except Exception as e:
+            if "Conflict" in str(e) and attempt < max_retries - 1:
+                logger.warning(f"Conflict detected, retrying in 5 seconds... (attempt {attempt + 1})")
+                await asyncio.sleep(5)
+            else:
+                raise
     
     logger.info("Telegram bot is running!")
     
@@ -269,9 +286,11 @@ async def run_bot():
     except asyncio.CancelledError:
         pass
     finally:
+        logger.info("Stopping Telegram bot...")
         await application.updater.stop()
         await application.stop()
         await application.shutdown()
+        logger.info("Telegram bot stopped")
 
 
 if __name__ == "__main__":
