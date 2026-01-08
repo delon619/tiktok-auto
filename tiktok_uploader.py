@@ -15,7 +15,8 @@ from config import (
     TIKTOK_COOKIES_PATH, 
     HEADLESS_UPLOAD,
     TIKTOK_DEFAULT_CAPTION,
-    COOKIES_DIR
+    COOKIES_DIR,
+    LOGS_DIR
 )
 from logger_setup import setup_logger
 
@@ -159,9 +160,9 @@ class TikTokUploader:
                 logger.warning("Session expired - redirect to login page")
                 return False
             
-            # Screenshot untuk debug
+            # Screenshot untuk debug (simpan ke logs folder untuk persistence)
             try:
-                screenshot_path = COOKIES_DIR / "debug_login_check.png"
+                screenshot_path = LOGS_DIR / "debug_login_check.png"
                 await self.page.screenshot(path=str(screenshot_path))
                 logger.info(f"Screenshot saved to {screenshot_path}")
             except:
@@ -194,9 +195,9 @@ class TikTokUploader:
                 return True
             
             logger.warning("Upload elements not found")
-            # Screenshot untuk debug
+            # Screenshot untuk debug (simpan ke logs folder)
             try:
-                screenshot_path = COOKIES_DIR / "debug_screenshot.png"
+                screenshot_path = LOGS_DIR / "debug_screenshot.png"
                 await self.page.screenshot(path=str(screenshot_path))
                 logger.info(f"Screenshot saved to {screenshot_path}")
             except:
@@ -254,10 +255,10 @@ class TikTokUploader:
             # Tunggu file input muncul
             logger.info("Waiting for upload input...")
             
-            # Screenshot untuk debug
+            # Screenshot untuk debug (simpan ke logs folder)
             try:
-                await self.page.screenshot(path=str(COOKIES_DIR / "debug_before_input.png"))
-                logger.info("Screenshot saved: debug_before_input.png")
+                await self.page.screenshot(path=str(LOGS_DIR / "debug_before_input.png"))
+                logger.info(f"Screenshot saved: {LOGS_DIR / 'debug_before_input.png'}")
             except:
                 pass
             
@@ -349,9 +350,9 @@ class TikTokUploader:
                     except:
                         continue
             
-            # Screenshot setelah pencarian
+            # Screenshot setelah pencarian (simpan ke logs folder)
             try:
-                await self.page.screenshot(path=str(COOKIES_DIR / "debug_after_search.png"))
+                await self.page.screenshot(path=str(LOGS_DIR / "debug_after_search.png"))
             except:
                 pass
             
@@ -479,8 +480,8 @@ class TikTokUploader:
             # Klik Post button - harus yang di form, bukan di sidebar
             logger.info("Looking for Post button...")
             
-            # Screenshot untuk debug
-            await self.page.screenshot(path='debug_looking_post.png')
+            # Screenshot untuk debug (simpan ke logs folder)
+            await self.page.screenshot(path=str(LOGS_DIR / 'debug_looking_post.png'))
             
             # Selector lebih spesifik untuk tombol Post di form (bukan sidebar)
             # Tombol Post biasanya di kanan/bawah form dengan warna primary
@@ -551,35 +552,54 @@ class TikTokUploader:
                     logger.info(f"Selected first candidate: '{text}'")
             
             if not post_button:
-                await self.page.screenshot(path='debug_post_button.png')
+                await self.page.screenshot(path=str(LOGS_DIR / 'debug_post_button.png'))
                 return False, "Post button tidak ditemukan"
             
             # Scroll ke button dan klik
             logger.info("Clicking Post button...")
             
-            # Scroll ke bawah halaman dulu untuk memastikan button terlihat
-            await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+            # Scroll ke Post button dengan benar
+            await post_button.scroll_into_view_if_needed()
             await self._random_delay(1, 2)
             
-            await post_button.scroll_into_view_if_needed()
-            await self._random_delay(0.5, 1)
+            # Scroll sedikit lagi untuk memastikan button tidak tertutup
+            await self.page.evaluate('window.scrollBy(0, 100)')
+            await self._random_delay(1, 2)
             
-            # Screenshot sebelum klik
-            await self.page.screenshot(path='debug_before_post.png')
-            
-            # Ambil bounding box button
+            # Ambil bounding box SETELAH scroll (posisi mungkin berubah)
             box = await post_button.bounding_box()
             if box:
-                logger.info(f"Button position: x={box['x']}, y={box['y']}, w={box['width']}, h={box['height']}")
+                logger.info(f"Button position after scroll: x={box['x']}, y={box['y']}, w={box['width']}, h={box['height']}")
+            
+            # Screenshot sebelum klik (simpan ke logs folder)
+            await self.page.screenshot(path=str(LOGS_DIR / 'debug_before_post.png'))
+            
+            # Pastikan button visible dan enabled
+            try:
+                await post_button.wait_for_element_state('visible', timeout=5000)
+            except:
+                logger.warning("Button may not be fully visible")
             
             # Coba berbagai metode klik
             clicked = False
             
-            # Metode 1: Klik dengan mouse di tengah button
+            # Metode 1: Klik dengan mouse di tengah button (ambil posisi baru)
+            box = await post_button.bounding_box()  # Refresh bounding box
             if box and not clicked:
                 try:
                     x = box['x'] + box['width'] / 2
                     y = box['y'] + box['height'] / 2
+                    # Pastikan koordinat dalam viewport
+                    viewport = self.page.viewport_size
+                    if viewport and y > viewport['height']:
+                        # Scroll lagi jika button masih di luar viewport
+                        await self.page.evaluate(f'window.scrollBy(0, {y - viewport["height"] + 100})')
+                        await self._random_delay(0.5, 1)
+                        box = await post_button.bounding_box()
+                        if box:
+                            x = box['x'] + box['width'] / 2
+                            y = box['y'] + box['height'] / 2
+                    
                     await self.page.mouse.click(x, y)
                     clicked = True
                     logger.info(f"Clicked using mouse at ({x}, {y})")
@@ -615,9 +635,9 @@ class TikTokUploader:
                 except Exception as e:
                     logger.warning(f"dispatchEvent failed: {e}")
             
-            # Screenshot setelah klik
+            # Screenshot setelah klik (simpan ke logs folder)
             await self._random_delay(2, 3)
-            await self.page.screenshot(path='debug_after_post.png')
+            await self.page.screenshot(path=str(LOGS_DIR / 'debug_after_post.png'))
             
             logger.info("Post button clicked, waiting for upload to complete...")
             
@@ -629,11 +649,11 @@ class TikTokUploader:
             confirm_waited = 0
             
             while confirm_waited < max_confirm_wait:
-                # Screenshot setiap 20 detik untuk debug
-                if confirm_waited > 0 and confirm_waited % 20 == 0:
+                # Screenshot setiap 30 detik untuk debug (simpan ke logs folder)
+                if confirm_waited > 0 and confirm_waited % 30 == 0:
                     try:
-                        screenshot_path = f'debug_upload_{confirm_waited}s.png'
-                        await self.page.screenshot(path=screenshot_path)
+                        screenshot_path = LOGS_DIR / f'debug_upload_{confirm_waited}s.png'
+                        await self.page.screenshot(path=str(screenshot_path))
                         logger.info(f"Screenshot saved: {screenshot_path}")
                     except:
                         pass
@@ -711,10 +731,11 @@ class TikTokUploader:
                 await asyncio.sleep(3)
                 confirm_waited += 3
             
-            # Ambil screenshot terakhir
+            # Ambil screenshot terakhir (simpan ke logs folder)
             try:
-                await self.page.screenshot(path='debug_final.png')
-                logger.info("Final screenshot saved: debug_final.png")
+                screenshot_path = LOGS_DIR / 'debug_final.png'
+                await self.page.screenshot(path=str(screenshot_path))
+                logger.info(f"Final screenshot saved: {screenshot_path}")
             except:
                 pass
             
@@ -728,10 +749,10 @@ class TikTokUploader:
         except Exception as e:
             logger.error(f"Upload failed with exception: {e}")
             
-            # Screenshot untuk debug
+            # Screenshot untuk debug (simpan ke logs folder)
             if self.page:
                 try:
-                    await self.page.screenshot(path='debug_error.png')
+                    await self.page.screenshot(path=str(LOGS_DIR / 'debug_error.png'))
                 except:
                     pass
             
