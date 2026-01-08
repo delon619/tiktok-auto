@@ -21,7 +21,8 @@ from config import (
     TELEGRAM_BOT_TOKEN, 
     ALLOWED_USER_IDS, 
     VIDEOS_DIR,
-    TIKTOK_DEFAULT_CAPTION
+    TIKTOK_DEFAULT_CAPTION,
+    LOGS_DIR
 )
 from database import db, STATUS_PENDING, STATUS_POSTED, STATUS_FAILED
 from logger_setup import setup_logger
@@ -84,6 +85,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 • /start - Mulai bot
 • /status - Statistik video (pending/posted/failed)
 • /queue - Lihat antrian video pending
+• /debug - Lihat screenshot debug terbaru
 • /help - Tampilkan bantuan ini
 
 *Catatan:*
@@ -112,6 +114,51 @@ Total: {sum(stats.values())} video
 """
     await update.message.reply_text(status_text, parse_mode="Markdown")
     logger.info(f"Status requested by user {update.effective_user.id}")
+
+
+async def debug_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handler untuk /debug - kirim screenshot debug terbaru"""
+    if not is_authorized(update.effective_user.id):
+        return
+    
+    user_id = update.effective_user.id
+    
+    # Daftar screenshot debug yang mungkin ada
+    debug_files = [
+        ("debug_login_check.png", "🔐 Login Check"),
+        ("debug_before_input.png", "📥 Before Input"),
+        ("debug_after_search.png", "🔍 After Search"),
+        ("debug_input_not_found.png", "❌ Input Not Found"),
+        ("debug_before_post.png", "📸 Before Post"),
+        ("debug_after_post.png", "📸 After Post"),
+        ("debug_final.png", "🏁 Final State"),
+        ("debug_error.png", "❌ Error State"),
+    ]
+    
+    found_any = False
+    
+    for filename, caption in debug_files:
+        filepath = LOGS_DIR / filename
+        if filepath.exists():
+            try:
+                # Get file modification time
+                mtime = datetime.fromtimestamp(filepath.stat().st_mtime)
+                time_str = mtime.strftime("%Y-%m-%d %H:%M:%S")
+                
+                with open(filepath, 'rb') as photo:
+                    await update.message.reply_photo(
+                        photo=photo,
+                        caption=f"{caption}\n📁 {filename}\n🕐 {time_str}"
+                    )
+                found_any = True
+            except Exception as e:
+                logger.error(f"Error sending debug file {filename}: {e}")
+                await update.message.reply_text(f"❌ Error mengirim {filename}: {e}")
+    
+    if not found_any:
+        await update.message.reply_text("📭 Tidak ada screenshot debug yang tersedia.\n\nScreenshot akan dibuat saat upload berjalan.")
+    
+    logger.info(f"Debug screenshots requested by user {user_id}")
 
 
 async def queue_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -232,6 +279,7 @@ def create_bot_application() -> Application:
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("queue", queue_command))
+    application.add_handler(CommandHandler("debug", debug_command))
     
     # Video handler
     application.add_handler(MessageHandler(
