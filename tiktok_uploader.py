@@ -770,8 +770,13 @@ class TikTokUploader:
             else:
                 logger.warning("Caption input not found, proceeding without caption")
             
-            # Delay lebih lama setelah input caption (seperti review)
-            await self._random_delay(3, 6)
+            # Delay lebih lama setelah input caption (seperti user review sebelum post)
+            logger.info("Waiting after caption input (simulating user review)...")
+            await self._random_delay(8, 12)
+            
+            # Scroll halaman sedikit seperti user yang review
+            await self._human_scroll(self.page)
+            await self._random_delay(2, 4)
             
             # Klik Post button - harus yang di form, bukan di sidebar
             logger.info("Looking for Post button...")
@@ -851,8 +856,17 @@ class TikTokUploader:
                 await self.page.screenshot(path=str(LOGS_DIR / 'debug_post_button.png'))
                 return False, "Post button tidak ditemukan"
             
+            # ============================================
+            # DELAY PANJANG SEBELUM KLIK POST
+            # Simulasi user yang review konten sebelum post
+            # ============================================
+            logger.info("Waiting before clicking Post (simulating user review)...")
+            
+            # Delay 10-15 detik seperti user yang membaca/review
+            await self._random_delay(10, 15)
+            
             # Scroll ke button dan klik
-            logger.info("Clicking Post button...")
+            logger.info("Preparing to click Post button...")
             
             # Tutup semua modal/popup yang mungkin menghalangi SEBELUM klik Post
             try:
