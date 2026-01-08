@@ -478,14 +478,48 @@ class TikTokUploader:
             max_wait = 180  # 3 menit max untuk upload
             waited = 0
             
+            # Kata kunci error
+            error_keywords = [
+                'error', 'gagal', 'failed', 'kesalahan', 'terjadi kesalahan',
+                'tidak dapat', 'cannot', 'tidak berhasil', 'coba lagi',
+                'try again', 'something went wrong', 'menggantinya dengan video lain'
+            ]
+            
             while waited < max_wait:
                 # Cek apakah ada error (tapi skip beberapa detik pertama)
-                if waited > 15:  # Baru cek error setelah 15 detik
-                    error_element = await self.page.query_selector('[class*="error"]:not([class*="error-"]), [class*="Error"]:not([class*="Error-"])')
-                    if error_element:
-                        error_text = await error_element.text_content()
-                        if error_text and "error" in error_text.lower():
-                            return False, f"Upload error: {error_text}"
+                if waited > 10:  # Baru cek error setelah 10 detik
+                    # Cek error elements
+                    error_selectors = [
+                        '[class*="error"]',
+                        '[class*="Error"]',
+                        '[class*="toast"]',
+                        '[class*="Toast"]',
+                        '[class*="notice"]',
+                        '[class*="alert"]',
+                    ]
+                    for selector in error_selectors:
+                        try:
+                            error_element = await self.page.query_selector(selector)
+                            if error_element and await error_element.is_visible():
+                                error_text = await error_element.text_content()
+                                if error_text:
+                                    error_text_lower = error_text.lower()
+                                    for keyword in error_keywords:
+                                        if keyword in error_text_lower:
+                                            logger.error(f"Upload error detected: {error_text}")
+                                            # Screenshot error
+                                            try:
+                                                error_path = LOGS_DIR / 'debug_upload_error.png'
+                                                await self.page.screenshot(path=str(error_path))
+                                                await send_debug_screenshot_to_telegram(
+                                                    error_path,
+                                                    caption=f"❌ Upload Error: {error_text[:100]}"
+                                                )
+                                            except:
+                                                pass
+                                            return False, f"Upload error: {error_text}"
+                        except:
+                            continue
                 
                 # Cek apakah upload selesai (muncul caption editor atau post button)
                 caption_editor = await self.page.query_selector(
@@ -837,13 +871,28 @@ class TikTokUploader:
                 if confirm_waited % 30 == 0:
                     logger.info(f"Still uploading... ({confirm_waited}s)")
                 
-                # Cek error messages
+                # Cek error messages - termasuk pesan error TikTok dalam bahasa Indonesia
                 error_selectors = [
                     '[class*="error"]',
                     '[class*="Error"]', 
+                    '[class*="toast"]',
+                    '[class*="Toast"]',
+                    '[class*="alert"]',
+                    '[class*="Alert"]',
+                    '[class*="notice"]',
+                    '[class*="Notice"]',
                     'text="failed"',
                     'text="gagal"',
                     'text="tidak dapat"',
+                    'text="terjadi kesalahan"',
+                    'text="kesalahan"',
+                ]
+                
+                # Kata-kata kunci error dalam berbagai bahasa
+                error_keywords = [
+                    'error', 'gagal', 'failed', 'kesalahan', 'terjadi kesalahan',
+                    'tidak dapat', 'cannot', 'tidak berhasil', 'coba lagi',
+                    'try again', 'something went wrong'
                 ]
                 
                 for selector in error_selectors:
@@ -852,10 +901,22 @@ class TikTokUploader:
                         if elem and await elem.is_visible():
                             error_text = await elem.text_content()
                             if error_text and len(error_text.strip()) > 5:
-                                # Skip jika ini bukan pesan error yang sebenarnya
-                                if 'error' in error_text.lower() or 'gagal' in error_text.lower():
-                                    logger.error(f"Error detected: {error_text}")
-                                    return False, f"Upload failed: {error_text}"
+                                error_text_lower = error_text.lower()
+                                # Cek apakah mengandung kata kunci error
+                                for keyword in error_keywords:
+                                    if keyword in error_text_lower:
+                                        logger.error(f"Error detected: {error_text}")
+                                        # Screenshot error
+                                        try:
+                                            error_path = LOGS_DIR / 'debug_tiktok_error.png'
+                                            await self.page.screenshot(path=str(error_path))
+                                            await send_debug_screenshot_to_telegram(
+                                                error_path,
+                                                caption=f"❌ TikTok Error: {error_text[:100]}"
+                                            )
+                                        except:
+                                            pass
+                                        return False, f"TikTok error: {error_text}"
                     except:
                         continue
                 
