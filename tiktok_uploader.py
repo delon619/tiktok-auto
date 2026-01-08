@@ -558,18 +558,18 @@ class TikTokUploader:
             # Scroll ke button dan klik
             logger.info("Clicking Post button...")
             
-            # Scroll ke Post button dengan benar
-            await post_button.scroll_into_view_if_needed()
+            # Scroll ke bawah halaman dulu untuk memastikan form terlihat
+            await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
             await self._random_delay(1, 2)
             
-            # Scroll sedikit lagi untuk memastikan button tidak tertutup
-            await self.page.evaluate('window.scrollBy(0, 100)')
+            # Scroll ke Post button dengan benar
+            await post_button.scroll_into_view_if_needed()
             await self._random_delay(1, 2)
             
             # Ambil bounding box SETELAH scroll (posisi mungkin berubah)
             box = await post_button.bounding_box()
             if box:
-                logger.info(f"Button position after scroll: x={box['x']}, y={box['y']}, w={box['width']}, h={box['height']}")
+                logger.info(f"Button position: x={box['x']}, y={box['y']}, w={box['width']}, h={box['height']}")
             
             # Screenshot sebelum klik (simpan ke logs folder)
             await self.page.screenshot(path=str(LOGS_DIR / 'debug_before_post.png'))
@@ -659,63 +659,65 @@ class TikTokUploader:
                         pass
                 
                 current_url = self.page.url
-                logger.debug(f"Current URL: {current_url}")
                 
-                # Cek apakah sudah redirect ke manage/profile (berarti sudah selesai upload)
-                if any(x in current_url.lower() for x in ['manage', 'profile', '/@', '/content']):
+                # Cek apakah sudah redirect ke manage/profile/content (berarti sudah selesai upload)
+                if any(x in current_url.lower() for x in ['manage', 'profile', '/@', '/content', 'tiktokstudio/content']):
                     logger.info(f"Redirected to: {current_url} - Upload successful!")
                     return True, "Video berhasil diupload ke TikTok!"
                 
-                # Cek success indicator (hanya yang benar-benar menunjukkan posting selesai)
-                success_indicators = [
-                    'text=Your video is being uploaded to TikTok',
-                    'text=Video posted',
-                    'text=successfully',
-                    'text=Video sedang diproses',
-                    'text=Berhasil diposting',
-                    'text=Video telah diposting',
-                    'text=Posted to TikTok',
+                # Cek success indicator dengan selector yang lebih baik
+                success_selectors = [
+                    # Pesan sukses dalam berbagai bahasa
+                    'text="Your video is being uploaded"',
+                    'text="Video posted"', 
+                    'text="Posted"',
+                    'text="Video sedang diproses"',
+                    'text="Berhasil diposting"',
+                    'text="Video telah diposting"',
+                    'text="Upload selesai"',
+                    # Toast/notification sukses
+                    '[class*="toast"]:has-text("success")',
+                    '[class*="Toast"]:has-text("berhasil")',
+                    '[class*="notification"]:has-text("posted")',
                 ]
                 
-                for indicator in success_indicators:
+                for selector in success_selectors:
                     try:
-                        element = await self.page.query_selector(indicator)
-                        if element and await element.is_visible():
-                            text = await element.text_content()
-                            logger.info(f"Success indicator found: {text}")
-                            # Tunggu sebentar lagi untuk memastikan
+                        element = await self.page.query_selector(selector)
+                        if element:
+                            is_visible = await element.is_visible()
+                            if is_visible:
+                                text = await element.text_content()
+                                logger.info(f"Success indicator found: {text}")
+                                await self._random_delay(2, 3)
+                                return True, "Video berhasil diupload ke TikTok!"
+                    except:
+                        continue
+                
+                # Cek apakah tombol Post masih ada dan enabled (berarti belum diklik/submit)
+                try:
+                    post_btn = await self.page.query_selector('button:has-text("Posting"), button:has-text("Post")')
+                    if post_btn:
+                        is_disabled = await post_btn.is_disabled()
+                        # Jika button masih enabled setelah 30 detik, mungkin klik gagal
+                        if not is_disabled and confirm_waited >= 30:
+                            logger.warning("Post button still enabled - clicking again...")
+                            await post_btn.click(force=True)
                             await self._random_delay(3, 5)
-                            return True, "Video berhasil diupload ke TikTok!"
-                    except:
-                        continue
+                except:
+                    pass
                 
-                # Cek apakah masih ada progress upload
-                progress_selectors = [
-                    '[class*="progress"]',
-                    '[class*="Progress"]',
-                    '[class*="loading"]',
-                    '[class*="uploading"]',
-                ]
+                # Log progress setiap 30 detik
+                if confirm_waited % 30 == 0:
+                    logger.info(f"Still uploading... ({confirm_waited}s)")
                 
-                is_still_uploading = False
-                for selector in progress_selectors:
-                    try:
-                        elem = await self.page.query_selector(selector)
-                        if elem and await elem.is_visible():
-                            is_still_uploading = True
-                            if confirm_waited % 10 == 0:
-                                logger.info(f"Still uploading... ({confirm_waited}s)")
-                            break
-                    except:
-                        continue
-                
-                # Cek error
+                # Cek error messages
                 error_selectors = [
-                    'text=failed',
-                    'text=error',
-                    'text=gagal',
-                    'text=tidak dapat',
-                    '[class*="error"]:visible',
+                    '[class*="error"]',
+                    '[class*="Error"]', 
+                    'text="failed"',
+                    'text="gagal"',
+                    'text="tidak dapat"',
                 ]
                 
                 for selector in error_selectors:
@@ -723,8 +725,11 @@ class TikTokUploader:
                         elem = await self.page.query_selector(selector)
                         if elem and await elem.is_visible():
                             error_text = await elem.text_content()
-                            if error_text and len(error_text) > 3:
-                                return False, f"Upload failed: {error_text}"
+                            if error_text and len(error_text.strip()) > 5:
+                                # Skip jika ini bukan pesan error yang sebenarnya
+                                if 'error' in error_text.lower() or 'gagal' in error_text.lower():
+                                    logger.error(f"Error detected: {error_text}")
+                                    return False, f"Upload failed: {error_text}"
                     except:
                         continue
                 
