@@ -86,6 +86,9 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 • /status - Statistik video (pending/posted/failed)
 • /queue - Lihat antrian video pending
 • /debug - Lihat screenshot debug terbaru
+• /clearall - Hapus SEMUA video dari database
+• /clearpending - Hapus semua video pending
+• /clearfailed - Hapus semua video failed
 • /help - Tampilkan bantuan ini
 
 *Catatan:*
@@ -159,6 +162,92 @@ async def debug_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("📭 Tidak ada screenshot debug yang tersedia.\n\nScreenshot akan dibuat saat upload berjalan.")
     
     logger.info(f"Debug screenshots requested by user {user_id}")
+
+
+async def clearall_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handler untuk /clearall - hapus semua video dari database"""
+    if not is_authorized(update.effective_user.id):
+        return
+    
+    user_id = update.effective_user.id
+    
+    # Get stats sebelum hapus
+    stats = db.get_stats()
+    total = sum(stats.values())
+    
+    if total == 0:
+        await update.message.reply_text("📭 Database sudah kosong, tidak ada video untuk dihapus.")
+        return
+    
+    # Hapus semua video
+    deleted = db.delete_all_videos()
+    
+    # Hapus file video dari folder
+    deleted_files = 0
+    try:
+        for video_file in VIDEOS_DIR.glob("*.mp4"):
+            try:
+                video_file.unlink()
+                deleted_files += 1
+            except Exception as e:
+                logger.error(f"Failed to delete file {video_file}: {e}")
+    except Exception as e:
+        logger.error(f"Error cleaning video files: {e}")
+    
+    message = f"""
+🗑️ *Semua Video Dihapus!*
+
+📊 Database: {deleted} video dihapus
+📁 File: {deleted_files} file dihapus
+
+Statistik sebelum dihapus:
+• Pending: {stats[STATUS_PENDING]}
+• Posted: {stats[STATUS_POSTED]}
+• Failed: {stats[STATUS_FAILED]}
+"""
+    await update.message.reply_text(message, parse_mode="Markdown")
+    logger.info(f"All videos deleted by user {user_id}: {deleted} records, {deleted_files} files")
+
+
+async def clearpending_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handler untuk /clearpending - hapus semua video pending"""
+    if not is_authorized(update.effective_user.id):
+        return
+    
+    user_id = update.effective_user.id
+    pending_count = db.get_pending_count()
+    
+    if pending_count == 0:
+        await update.message.reply_text("📭 Tidak ada video pending untuk dihapus.")
+        return
+    
+    # Hapus semua pending
+    deleted = db.delete_all_pending()
+    
+    message = f"🗑️ *{deleted} video pending* berhasil dihapus dari antrian!"
+    await update.message.reply_text(message, parse_mode="Markdown")
+    logger.info(f"Pending videos deleted by user {user_id}: {deleted} records")
+
+
+async def clearfailed_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handler untuk /clearfailed - hapus semua video failed"""
+    if not is_authorized(update.effective_user.id):
+        return
+    
+    user_id = update.effective_user.id
+    stats = db.get_stats()
+    failed_count = stats[STATUS_FAILED]
+    
+    if failed_count == 0:
+        await update.message.reply_text("📭 Tidak ada video failed untuk dihapus.")
+        return
+    
+    # Hapus semua failed
+    deleted = db.delete_all_failed()
+    
+    message = f"🗑️ *{deleted} video failed* berhasil dihapus!"
+    await update.message.reply_text(message, parse_mode="Markdown")
+    logger.info(f"Failed videos deleted by user {user_id}: {deleted} records")
 
 
 async def queue_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -280,6 +369,9 @@ def create_bot_application() -> Application:
     application.add_handler(CommandHandler("status", status_command))
     application.add_handler(CommandHandler("queue", queue_command))
     application.add_handler(CommandHandler("debug", debug_command))
+    application.add_handler(CommandHandler("clearall", clearall_command))
+    application.add_handler(CommandHandler("clearpending", clearpending_command))
+    application.add_handler(CommandHandler("clearfailed", clearfailed_command))
     
     # Video handler
     application.add_handler(MessageHandler(

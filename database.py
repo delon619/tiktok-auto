@@ -209,6 +209,33 @@ class VideoDatabase:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM videos WHERE id = ?", (video_id,))
             return cursor.rowcount > 0
+    
+    def delete_all_videos(self, status: Optional[str] = None) -> int:
+        """
+        Hapus semua video dari database
+        
+        Args:
+            status: Jika diberikan, hanya hapus video dengan status tertentu
+                   Jika None, hapus semua video
+        
+        Returns:
+            Jumlah video yang dihapus
+        """
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            if status:
+                cursor.execute("DELETE FROM videos WHERE status = ?", (status,))
+            else:
+                cursor.execute("DELETE FROM videos")
+            return cursor.rowcount
+    
+    def delete_all_pending(self) -> int:
+        """Hapus semua video pending"""
+        return self.delete_all_videos(STATUS_PENDING)
+    
+    def delete_all_failed(self) -> int:
+        """Hapus semua video failed"""
+        return self.delete_all_videos(STATUS_FAILED)
 
 
 # Singleton instance
