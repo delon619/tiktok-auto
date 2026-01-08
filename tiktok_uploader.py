@@ -36,9 +36,14 @@ async def send_debug_screenshot_to_telegram(screenshot_path: Path, caption: str 
         screenshot_path: Path ke file screenshot
         caption: Caption untuk screenshot
     """
+    logger.info(f"Attempting to send screenshot: {screenshot_path}")
+    
     if not TELEGRAM_BOT_TOKEN:
         logger.warning("TELEGRAM_BOT_TOKEN tidak dikonfigurasi, skip kirim screenshot")
         return
+    
+    # Konversi ke Path jika belum
+    screenshot_path = Path(screenshot_path)
     
     if not screenshot_path.exists():
         logger.warning(f"Screenshot tidak ditemukan: {screenshot_path}")
@@ -48,32 +53,37 @@ async def send_debug_screenshot_to_telegram(screenshot_path: Path, caption: str 
         logger.warning("ALLOWED_USER_IDS kosong, skip kirim screenshot")
         return
     
+    logger.info(f"Sending screenshot to {len(ALLOWED_USER_IDS)} user(s): {ALLOWED_USER_IDS}")
+    
     try:
         async with aiohttp.ClientSession() as session:
             url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
             
             for user_id in ALLOWED_USER_IDS:
                 try:
-                    # Read file and create form data
-                    with open(screenshot_path, 'rb') as photo:
-                        form_data = aiohttp.FormData()
-                        form_data.add_field('chat_id', str(user_id))
-                        form_data.add_field('caption', f"🔍 {caption}\n📁 {screenshot_path.name}")
-                        form_data.add_field('photo', photo, 
-                                          filename=screenshot_path.name,
-                                          content_type='image/png')
-                        
-                        async with session.post(url, data=form_data) as response:
-                            if response.status == 200:
-                                logger.info(f"Screenshot sent to user {user_id}")
-                            else:
-                                resp_text = await response.text()
-                                logger.warning(f"Failed to send screenshot to {user_id}: {resp_text}")
+                    # Read file as bytes first
+                    with open(screenshot_path, 'rb') as f:
+                        photo_bytes = f.read()
+                    
+                    # Create form data with bytes
+                    form_data = aiohttp.FormData()
+                    form_data.add_field('chat_id', str(user_id))
+                    form_data.add_field('caption', f"🔍 {caption}\n📁 {screenshot_path.name}")
+                    form_data.add_field('photo', photo_bytes, 
+                                      filename=screenshot_path.name,
+                                      content_type='image/png')
+                    
+                    async with session.post(url, data=form_data) as response:
+                        resp_text = await response.text()
+                        if response.status == 200:
+                            logger.info(f"Screenshot sent to user {user_id}")
+                        else:
+                            logger.warning(f"Failed to send screenshot to {user_id}: status={response.status}, response={resp_text}")
                 except Exception as e:
-                    logger.error(f"Error sending screenshot to user {user_id}: {e}")
+                    logger.error(f"Error sending screenshot to user {user_id}: {type(e).__name__}: {e}")
                     
     except Exception as e:
-        logger.error(f"Error sending debug screenshot: {e}")
+        logger.error(f"Error sending debug screenshot: {type(e).__name__}: {e}")
 BROWSER_PROFILE_DIR = COOKIES_DIR / "browser_profile"
 
 
@@ -217,8 +227,8 @@ class TikTokUploader:
                         login_path,
                         caption="⚠️ Session Expired - Perlu login ulang"
                     )
-                except:
-                    pass
+                except Exception as e:
+                    logger.error(f"Failed to send session expired screenshot: {e}")
                 return False
             
             # Screenshot untuk debug (simpan ke logs folder untuk persistence)
@@ -231,8 +241,8 @@ class TikTokUploader:
                     screenshot_path,
                     caption="🔐 Login Check - Halaman setelah buka TikTok Upload"
                 )
-            except:
-                pass
+            except Exception as e:
+                logger.error(f"Failed to save/send login check screenshot: {e}")
             
             # Cek berbagai kemungkinan elemen upload
             selectors_to_try = [
@@ -447,12 +457,13 @@ class TikTokUploader:
                     # Kirim screenshot error ke Telegram
                     error_input_path = LOGS_DIR / "debug_input_not_found.png"
                     await self.page.screenshot(path=str(error_input_path))
+                    logger.info(f"Error screenshot saved to {error_input_path}")
                     await send_debug_screenshot_to_telegram(
                         error_input_path,
                         caption="❌ Upload Input Not Found - File input tidak ditemukan di halaman"
                     )
-                except:
-                    pass
+                except Exception as e:
+                    logger.error(f"Failed to save/send input not found screenshot: {e}")
                 return False, "Upload input tidak ditemukan - cek debug_page.html dan screenshot"
             
             # Upload file langsung (tanpa harus visible)
