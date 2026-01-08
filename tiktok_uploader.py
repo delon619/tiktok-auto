@@ -6,8 +6,9 @@ import asyncio
 import json
 import os
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import random
+import aiohttp
 
 from playwright.async_api import async_playwright, Browser, BrowserContext, Page
 
@@ -16,13 +17,63 @@ from config import (
     HEADLESS_UPLOAD,
     TIKTOK_DEFAULT_CAPTION,
     COOKIES_DIR,
-    LOGS_DIR
+    LOGS_DIR,
+    TELEGRAM_BOT_TOKEN,
+    ALLOWED_USER_IDS
 )
 from logger_setup import setup_logger
 
 logger = setup_logger("tiktok_uploader")
 
 TIKTOK_UPLOAD_URL = "https://www.tiktok.com/upload"
+
+
+async def send_debug_screenshot_to_telegram(screenshot_path: Path, caption: str = "Debug Screenshot"):
+    """
+    Mengirim screenshot debug ke semua user yang diizinkan via Telegram
+    
+    Args:
+        screenshot_path: Path ke file screenshot
+        caption: Caption untuk screenshot
+    """
+    if not TELEGRAM_BOT_TOKEN:
+        logger.warning("TELEGRAM_BOT_TOKEN tidak dikonfigurasi, skip kirim screenshot")
+        return
+    
+    if not screenshot_path.exists():
+        logger.warning(f"Screenshot tidak ditemukan: {screenshot_path}")
+        return
+    
+    if not ALLOWED_USER_IDS:
+        logger.warning("ALLOWED_USER_IDS kosong, skip kirim screenshot")
+        return
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
+            
+            for user_id in ALLOWED_USER_IDS:
+                try:
+                    # Read file and create form data
+                    with open(screenshot_path, 'rb') as photo:
+                        form_data = aiohttp.FormData()
+                        form_data.add_field('chat_id', str(user_id))
+                        form_data.add_field('caption', f"🔍 {caption}\n📁 {screenshot_path.name}")
+                        form_data.add_field('photo', photo, 
+                                          filename=screenshot_path.name,
+                                          content_type='image/png')
+                        
+                        async with session.post(url, data=form_data) as response:
+                            if response.status == 200:
+                                logger.info(f"Screenshot sent to user {user_id}")
+                            else:
+                                resp_text = await response.text()
+                                logger.warning(f"Failed to send screenshot to {user_id}: {resp_text}")
+                except Exception as e:
+                    logger.error(f"Error sending screenshot to user {user_id}: {e}")
+                    
+    except Exception as e:
+        logger.error(f"Error sending debug screenshot: {e}")
 BROWSER_PROFILE_DIR = COOKIES_DIR / "browser_profile"
 
 
@@ -605,8 +656,13 @@ class TikTokUploader:
             if box:
                 logger.info(f"Button position: x={box['x']}, y={box['y']}, w={box['width']}, h={box['height']}")
             
-            # Screenshot sebelum klik (simpan ke logs folder)
-            await self.page.screenshot(path=str(LOGS_DIR / 'debug_before_post.png'))
+            # Screenshot sebelum klik (simpan ke logs folder dan kirim ke Telegram)
+            before_post_path = LOGS_DIR / 'debug_before_post.png'
+            await self.page.screenshot(path=str(before_post_path))
+            await send_debug_screenshot_to_telegram(
+                before_post_path, 
+                caption="📸 Before Post Click - Halaman sebelum klik tombol Post"
+            )
             
             # Coba berbagai metode klik - mulai dari JavaScript yang paling kuat
             clicked = False
@@ -652,9 +708,14 @@ class TikTokUploader:
                 except Exception as e:
                     logger.warning(f"Mouse click failed: {e}")
             
-            # Screenshot setelah klik (simpan ke logs folder)
+            # Screenshot setelah klik (simpan ke logs folder dan kirim ke Telegram)
             await self._random_delay(2, 3)
-            await self.page.screenshot(path=str(LOGS_DIR / 'debug_after_post.png'))
+            after_post_path = LOGS_DIR / 'debug_after_post.png'
+            await self.page.screenshot(path=str(after_post_path))
+            await send_debug_screenshot_to_telegram(
+                after_post_path, 
+                caption="📸 After Post Click - Halaman setelah klik tombol Post"
+            )
             
             logger.info("Post button clicked, waiting for upload to complete...")
             
@@ -753,13 +814,18 @@ class TikTokUploader:
                 await asyncio.sleep(3)
                 confirm_waited += 3
             
-            # Ambil screenshot terakhir (simpan ke logs folder)
+            # Ambil screenshot terakhir (simpan ke logs folder dan kirim ke Telegram)
             try:
                 screenshot_path = LOGS_DIR / 'debug_final.png'
                 await self.page.screenshot(path=str(screenshot_path))
                 logger.info(f"Final screenshot saved: {screenshot_path}")
-            except:
-                pass
+                # Kirim ke Telegram
+                await send_debug_screenshot_to_telegram(
+                    screenshot_path, 
+                    caption="🏁 Final State - Setelah menunggu konfirmasi upload"
+                )
+            except Exception as e:
+                logger.warning(f"Failed to save/send final screenshot: {e}")
             
             # Cek URL terakhir
             final_url = self.page.url
@@ -771,12 +837,19 @@ class TikTokUploader:
         except Exception as e:
             logger.error(f"Upload failed with exception: {e}")
             
-            # Screenshot untuk debug (simpan ke logs folder)
+            # Screenshot untuk debug (simpan ke logs folder dan kirim ke Telegram)
             if self.page:
                 try:
-                    await self.page.screenshot(path=str(LOGS_DIR / 'debug_error.png'))
-                except:
-                    pass
+                    error_screenshot_path = LOGS_DIR / 'debug_error.png'
+                    await self.page.screenshot(path=str(error_screenshot_path))
+                    logger.info(f"Error screenshot saved: {error_screenshot_path}")
+                    # Kirim ke Telegram
+                    await send_debug_screenshot_to_telegram(
+                        error_screenshot_path, 
+                        caption=f"❌ Error State - {str(e)[:100]}"
+                    )
+                except Exception as e2:
+                    logger.warning(f"Failed to save/send error screenshot: {e2}")
             
             return False, f"Upload error: {str(e)}"
         
