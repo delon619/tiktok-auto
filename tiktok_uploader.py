@@ -668,8 +668,37 @@ class TikTokUploader:
             
             await self._random_delay(2, 3)
             
-            # Tutup modal popup jika ada (copyright check, dll)
-            logger.info("Checking for modal popups...")
+            # Handle popup "Aktifkan pemeriksaan konten otomatis?" - klik Aktifkan
+            logger.info("Checking for content check popup...")
+            try:
+                # Cari popup pemeriksaan konten
+                aktifkan_selectors = [
+                    'button:has-text("Aktifkan")',
+                    'button:has-text("Enable")',
+                    'button:has-text("Turn on")',
+                    '[class*="Modal"] button[class*="primary"]',
+                    '[class*="Dialog"] button[class*="primary"]',
+                ]
+                
+                for selector in aktifkan_selectors:
+                    try:
+                        aktifkan_btn = await self.page.query_selector(selector)
+                        if aktifkan_btn and await aktifkan_btn.is_visible():
+                            # Verifikasi ini adalah popup yang benar
+                            text = await aktifkan_btn.text_content()
+                            if text and ('aktifkan' in text.lower() or 'enable' in text.lower() or 'turn on' in text.lower()):
+                                await self._random_delay(0.5, 1)
+                                await aktifkan_btn.click()
+                                logger.info(f"Clicked 'Aktifkan' button for content check")
+                                await self._random_delay(2, 3)
+                                break
+                    except:
+                        continue
+            except Exception as e:
+                logger.debug(f"No content check popup or error: {e}")
+            
+            # Tutup modal popup lain jika ada (copyright check, dll)
+            logger.info("Checking for other modal popups...")
             try:
                 modal_close_selectors = [
                     '[class*="Modal"] button[class*="close"]',
