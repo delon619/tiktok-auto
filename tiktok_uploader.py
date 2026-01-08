@@ -558,6 +558,40 @@ class TikTokUploader:
             # Scroll ke button dan klik
             logger.info("Clicking Post button...")
             
+            # Tutup semua modal/popup yang mungkin menghalangi SEBELUM klik Post
+            try:
+                # Tekan Escape beberapa kali untuk tutup modal
+                for _ in range(3):
+                    await self.page.keyboard.press('Escape')
+                    await self._random_delay(0.3, 0.5)
+                
+                # Coba tutup modal dengan berbagai selector
+                modal_close_selectors = [
+                    '[class*="TUXModal"] button',
+                    '[class*="Modal"] button[class*="close"]',
+                    '[class*="modal"] [aria-label="Close"]',
+                    'button:has-text("Got it")',
+                    'button:has-text("OK")',
+                    'button:has-text("Mengerti")',
+                    'button:has-text("Tutup")',
+                    '[class*="overlay"] button',
+                ]
+                
+                for selector in modal_close_selectors:
+                    try:
+                        modal_btns = await self.page.query_selector_all(selector)
+                        for btn in modal_btns:
+                            if await btn.is_visible():
+                                await btn.click(force=True)
+                                logger.info(f"Closed modal: {selector}")
+                                await self._random_delay(0.5, 1)
+                    except:
+                        continue
+            except:
+                pass
+            
+            await self._random_delay(1, 2)
+            
             # Scroll ke bawah halaman dulu untuk memastikan form terlihat
             await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
             await self._random_delay(1, 2)
@@ -574,57 +608,18 @@ class TikTokUploader:
             # Screenshot sebelum klik (simpan ke logs folder)
             await self.page.screenshot(path=str(LOGS_DIR / 'debug_before_post.png'))
             
-            # Pastikan button visible dan enabled
-            try:
-                await post_button.wait_for_element_state('visible', timeout=5000)
-            except:
-                logger.warning("Button may not be fully visible")
-            
-            # Coba berbagai metode klik
+            # Coba berbagai metode klik - mulai dari JavaScript yang paling kuat
             clicked = False
             
-            # Metode 1: Klik dengan mouse di tengah button (ambil posisi baru)
-            box = await post_button.bounding_box()  # Refresh bounding box
-            if box and not clicked:
-                try:
-                    x = box['x'] + box['width'] / 2
-                    y = box['y'] + box['height'] / 2
-                    # Pastikan koordinat dalam viewport
-                    viewport = self.page.viewport_size
-                    if viewport and y > viewport['height']:
-                        # Scroll lagi jika button masih di luar viewport
-                        await self.page.evaluate(f'window.scrollBy(0, {y - viewport["height"] + 100})')
-                        await self._random_delay(0.5, 1)
-                        box = await post_button.bounding_box()
-                        if box:
-                            x = box['x'] + box['width'] / 2
-                            y = box['y'] + box['height'] / 2
-                    
-                    await self.page.mouse.click(x, y)
-                    clicked = True
-                    logger.info(f"Clicked using mouse at ({x}, {y})")
-                except Exception as e:
-                    logger.warning(f"Mouse click failed: {e}")
+            # Metode 1: JavaScript click langsung (paling reliable)
+            try:
+                await post_button.evaluate('el => el.click()')
+                clicked = True
+                logger.info("Clicked using JavaScript")
+            except Exception as e:
+                logger.warning(f"JS click failed: {e}")
             
-            # Metode 2: Normal click dengan force
-            if not clicked:
-                try:
-                    await post_button.click(force=True, timeout=5000)
-                    clicked = True
-                    logger.info("Clicked using force click")
-                except Exception as e:
-                    logger.warning(f"Force click failed: {e}")
-            
-            # Metode 3: JavaScript click
-            if not clicked:
-                try:
-                    await post_button.evaluate('el => el.click()')
-                    clicked = True
-                    logger.info("Clicked using JavaScript")
-                except Exception as e:
-                    logger.warning(f"JS click failed: {e}")
-            
-            # Metode 4: dispatchEvent
+            # Metode 2: dispatchEvent dengan MouseEvent
             if not clicked:
                 try:
                     await post_button.evaluate('''el => {
@@ -634,6 +629,28 @@ class TikTokUploader:
                     logger.info("Clicked using dispatchEvent")
                 except Exception as e:
                     logger.warning(f"dispatchEvent failed: {e}")
+            
+            # Metode 3: Normal click dengan force
+            if not clicked:
+                try:
+                    await post_button.click(force=True, timeout=5000)
+                    clicked = True
+                    logger.info("Clicked using force click")
+                except Exception as e:
+                    logger.warning(f"Force click failed: {e}")
+            
+            # Metode 4: Mouse click di tengah button
+            if not clicked:
+                try:
+                    box = await post_button.bounding_box()
+                    if box:
+                        x = box['x'] + box['width'] / 2
+                        y = box['y'] + box['height'] / 2
+                        await self.page.mouse.click(x, y)
+                        clicked = True
+                        logger.info(f"Clicked using mouse at ({x}, {y})")
+                except Exception as e:
+                    logger.warning(f"Mouse click failed: {e}")
             
             # Screenshot setelah klik (simpan ke logs folder)
             await self._random_delay(2, 3)
