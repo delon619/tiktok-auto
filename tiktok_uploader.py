@@ -127,7 +127,35 @@ class TikTokUploader:
             
             # Ketik karakter per karakter dengan delay random
             for char in text:
-                await page.keyboard.type(char, delay=random.randint(30, 100))
+                await page.keyboard.type(char, delay=random.randint(50, 150))
+    
+    async def _human_mouse_move(self, page: Page, x: int, y: int):
+        """Gerakkan mouse secara natural seperti manusia"""
+        # Get current mouse position (approximate)
+        current_x = random.randint(100, 500)
+        current_y = random.randint(100, 300)
+        
+        # Move in small steps with random delays
+        steps = random.randint(5, 15)
+        for i in range(steps):
+            # Calculate intermediate position with some randomness
+            progress = (i + 1) / steps
+            intermediate_x = current_x + (x - current_x) * progress + random.randint(-10, 10)
+            intermediate_y = current_y + (y - current_y) * progress + random.randint(-10, 10)
+            
+            await page.mouse.move(intermediate_x, intermediate_y)
+            await asyncio.sleep(random.uniform(0.01, 0.05))
+        
+        # Final position
+        await page.mouse.move(x, y)
+    
+    async def _human_scroll(self, page: Page):
+        """Scroll halaman seperti manusia - random scroll up/down"""
+        scroll_amount = random.randint(100, 300)
+        direction = random.choice([1, -1])
+        
+        await page.mouse.wheel(0, scroll_amount * direction)
+        await self._random_delay(0.3, 0.8)
     
     async def _init_browser(self, headless: bool = True):
         """Inisialisasi browser dengan persistent profile (sama seperti login)"""
@@ -137,33 +165,126 @@ class TikTokUploader:
         # Ini akan memakai session yang sudah ada
         BROWSER_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
         
+        # Random viewport untuk menghindari fingerprinting
+        viewport_width = random.randint(1250, 1350)
+        viewport_height = random.randint(700, 800)
+        
+        # User agents yang lebih baru dan beragam
+        user_agents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        ]
+        
         self.context = await self._playwright.chromium.launch_persistent_context(
             user_data_dir=str(BROWSER_PROFILE_DIR),
             headless=headless,
-            viewport={'width': 1280, 'height': 720},
-            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            viewport={'width': viewport_width, 'height': viewport_height},
+            user_agent=random.choice(user_agents),
             locale='id-ID',
             timezone_id='Asia/Jakarta',
+            color_scheme='light',
+            has_touch=False,
+            is_mobile=False,
+            java_script_enabled=True,
             args=[
                 '--disable-blink-features=AutomationControlled',
                 '--disable-infobars',
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-            ]
+                '--disable-accelerated-2d-canvas',
+                '--disable-gpu',
+                '--window-size=1280,720',
+                '--start-maximized',
+                '--disable-extensions',
+                '--disable-plugins-discovery',
+                '--disable-background-timer-throttling',
+                '--disable-backgrounding-occluded-windows',
+                '--disable-renderer-backgrounding',
+            ],
+            ignore_default_args=['--enable-automation'],
         )
         
-        # Anti-detection scripts
+        # Advanced anti-detection scripts
         await self.context.add_init_script("""
+            // Remove webdriver property
             Object.defineProperty(navigator, 'webdriver', {
                 get: () => undefined
             });
-            window.chrome = { runtime: {} };
+            
+            // Mock chrome object
+            window.chrome = {
+                runtime: {},
+                loadTimes: function() {},
+                csi: function() {},
+                app: {}
+            };
+            
+            // Mock plugins
             Object.defineProperty(navigator, 'plugins', {
-                get: () => [1, 2, 3, 4, 5]
+                get: () => {
+                    const plugins = [
+                        {name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer'},
+                        {name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai'},
+                        {name: 'Native Client', filename: 'internal-nacl-plugin'}
+                    ];
+                    plugins.item = (index) => plugins[index];
+                    plugins.namedItem = (name) => plugins.find(p => p.name === name);
+                    plugins.refresh = () => {};
+                    return plugins;
+                }
             });
+            
+            // Mock languages
             Object.defineProperty(navigator, 'languages', {
                 get: () => ['id-ID', 'id', 'en-US', 'en']
+            });
+            
+            // Mock permissions
+            const originalQuery = window.navigator.permissions.query;
+            window.navigator.permissions.query = (parameters) => (
+                parameters.name === 'notifications' ?
+                    Promise.resolve({ state: Notification.permission }) :
+                    originalQuery(parameters)
+            );
+            
+            // Mock WebGL
+            const getParameter = WebGLRenderingContext.prototype.getParameter;
+            WebGLRenderingContext.prototype.getParameter = function(parameter) {
+                if (parameter === 37445) {
+                    return 'Intel Inc.';
+                }
+                if (parameter === 37446) {
+                    return 'Intel Iris OpenGL Engine';
+                }
+                return getParameter.apply(this, arguments);
+            };
+            
+            // Remove automation indicators
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
+            
+            // Mock connection
+            Object.defineProperty(navigator, 'connection', {
+                get: () => ({
+                    effectiveType: '4g',
+                    rtt: 50,
+                    downlink: 10,
+                    saveData: false
+                })
+            });
+            
+            // Mock hardware concurrency
+            Object.defineProperty(navigator, 'hardwareConcurrency', {
+                get: () => 8
+            });
+            
+            // Mock device memory
+            Object.defineProperty(navigator, 'deviceMemory', {
+                get: () => 8
             });
         """)
         
@@ -175,6 +296,9 @@ class TikTokUploader:
             pass
         
         self.page = self.context.pages[0] if self.context.pages else await self.context.new_page()
+        
+        # Simulate some initial human behavior
+        await self._random_delay(1, 2)
         
         logger.info("Browser initialized with persistent profile")
     
@@ -597,18 +721,28 @@ class TikTokUploader:
             if caption_input:
                 # Clear existing caption dan ketik baru
                 await caption_input.click()
-                await self._random_delay(0.3, 0.5)
-                await self.page.keyboard.press('Control+A')
-                await self._random_delay(0.1, 0.3)
+                await self._random_delay(0.5, 1.0)
                 
-                # Ketik caption
-                await self.page.keyboard.type(caption, delay=random.randint(20, 50))
+                # Random scroll sedikit sebelum mulai ketik (human behavior)
+                await self._human_scroll(self.page)
+                await self._random_delay(0.3, 0.7)
+                
+                await self.page.keyboard.press('Control+A')
+                await self._random_delay(0.2, 0.4)
+                
+                # Ketik caption dengan delay yang lebih natural (seperti mengetik normal)
+                for char in caption:
+                    await self.page.keyboard.type(char, delay=random.randint(50, 120))
+                    # Kadang pause sebentar seperti berpikir
+                    if random.random() < 0.1:  # 10% chance
+                        await self._random_delay(0.3, 0.8)
                 
                 logger.info("Caption added")
             else:
                 logger.warning("Caption input not found, proceeding without caption")
             
-            await self._random_delay(2, 4)
+            # Delay lebih lama setelah input caption (seperti review)
+            await self._random_delay(3, 6)
             
             # Klik Post button - harus yang di form, bukan di sidebar
             logger.info("Looking for Post button...")
@@ -729,14 +863,24 @@ class TikTokUploader:
             await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
             await self._random_delay(1, 2)
             
+            # Human behavior: scroll sedikit dan gerak mouse sebelum klik
+            await self._human_scroll(self.page)
+            await self._random_delay(0.5, 1.5)
+            
             # Scroll ke Post button dengan benar
             await post_button.scroll_into_view_if_needed()
-            await self._random_delay(1, 2)
+            await self._random_delay(1.5, 3)
             
             # Ambil bounding box SETELAH scroll (posisi mungkin berubah)
             box = await post_button.bounding_box()
             if box:
                 logger.info(f"Button position: x={box['x']}, y={box['y']}, w={box['width']}, h={box['height']}")
+                
+                # Human behavior: move mouse to button area naturally
+                target_x = box['x'] + box['width'] / 2
+                target_y = box['y'] + box['height'] / 2
+                await self._human_mouse_move(self.page, int(target_x), int(target_y))
+                await self._random_delay(0.5, 1.0)
             
             # Screenshot sebelum klik (simpan ke logs folder dan kirim ke Telegram)
             before_post_path = LOGS_DIR / 'debug_before_post.png'
@@ -746,18 +890,42 @@ class TikTokUploader:
                 caption="📸 Before Post Click - Halaman sebelum klik tombol Post"
             )
             
-            # Coba berbagai metode klik - mulai dari JavaScript yang paling kuat
+            # Delay sebelum klik seperti user mereview
+            await self._random_delay(1, 2)
+            
+            # Coba berbagai metode klik - mulai dari yang paling natural
             clicked = False
             
-            # Metode 1: JavaScript click langsung (paling reliable)
-            try:
-                await post_button.evaluate('el => el.click()')
-                clicked = True
-                logger.info("Clicked using JavaScript")
-            except Exception as e:
-                logger.warning(f"JS click failed: {e}")
+            # Metode 1: Mouse click yang natural (paling human-like)
+            if box:
+                try:
+                    x = box['x'] + box['width'] / 2 + random.randint(-3, 3)  # Sedikit offset random
+                    y = box['y'] + box['height'] / 2 + random.randint(-3, 3)
+                    await self.page.mouse.click(x, y)
+                    clicked = True
+                    logger.info(f"Clicked using natural mouse at ({x:.0f}, {y:.0f})")
+                except Exception as e:
+                    logger.warning(f"Natural mouse click failed: {e}")
             
-            # Metode 2: dispatchEvent dengan MouseEvent
+            # Metode 2: Element click (jika mouse click gagal)
+            if not clicked:
+                try:
+                    await post_button.click(timeout=5000)
+                    clicked = True
+                    logger.info("Clicked using element click")
+                except Exception as e:
+                    logger.warning(f"Element click failed: {e}")
+            
+            # Metode 3: JavaScript click (fallback)
+            if not clicked:
+                try:
+                    await post_button.evaluate('el => el.click()')
+                    clicked = True
+                    logger.info("Clicked using JavaScript")
+                except Exception as e:
+                    logger.warning(f"JS click failed: {e}")
+            
+            # Metode 4: dispatchEvent dengan MouseEvent
             if not clicked:
                 try:
                     await post_button.evaluate('''el => {
@@ -768,7 +936,7 @@ class TikTokUploader:
                 except Exception as e:
                     logger.warning(f"dispatchEvent failed: {e}")
             
-            # Metode 3: Normal click dengan force
+            # Metode 5: Force click (last resort)
             if not clicked:
                 try:
                     await post_button.click(force=True, timeout=5000)
@@ -777,21 +945,8 @@ class TikTokUploader:
                 except Exception as e:
                     logger.warning(f"Force click failed: {e}")
             
-            # Metode 4: Mouse click di tengah button
-            if not clicked:
-                try:
-                    box = await post_button.bounding_box()
-                    if box:
-                        x = box['x'] + box['width'] / 2
-                        y = box['y'] + box['height'] / 2
-                        await self.page.mouse.click(x, y)
-                        clicked = True
-                        logger.info(f"Clicked using mouse at ({x}, {y})")
-                except Exception as e:
-                    logger.warning(f"Mouse click failed: {e}")
-            
             # Screenshot setelah klik (simpan ke logs folder dan kirim ke Telegram)
-            await self._random_delay(2, 3)
+            await self._random_delay(3, 5)  # Delay lebih lama setelah klik
             after_post_path = LOGS_DIR / 'debug_after_post.png'
             await self.page.screenshot(path=str(after_post_path))
             await send_debug_screenshot_to_telegram(
