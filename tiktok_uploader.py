@@ -209,6 +209,16 @@ class TikTokUploader:
             # Jika redirect ke login, berarti session expired
             if "login" in current_url.lower():
                 logger.warning("Session expired - redirect to login page")
+                # Screenshot saat session expired
+                try:
+                    login_path = LOGS_DIR / "debug_session_expired.png"
+                    await self.page.screenshot(path=str(login_path))
+                    await send_debug_screenshot_to_telegram(
+                        login_path,
+                        caption="⚠️ Session Expired - Perlu login ulang"
+                    )
+                except:
+                    pass
                 return False
             
             # Screenshot untuk debug (simpan ke logs folder untuk persistence)
@@ -216,6 +226,11 @@ class TikTokUploader:
                 screenshot_path = LOGS_DIR / "debug_login_check.png"
                 await self.page.screenshot(path=str(screenshot_path))
                 logger.info(f"Screenshot saved to {screenshot_path}")
+                # Kirim ke Telegram
+                await send_debug_screenshot_to_telegram(
+                    screenshot_path,
+                    caption="🔐 Login Check - Halaman setelah buka TikTok Upload"
+                )
             except:
                 pass
             
@@ -317,7 +332,7 @@ class TikTokUploader:
             file_input = None
             frames_to_check = [self.page] + self.page.frames
             
-            # Selector yang lebih lengkap untuk input file
+            # Selector yang lebih lengkap untuk input file - TikTok sering berubah
             file_input_selectors = [
                 'input[type="file"][accept*="video"]',
                 'input[type="file"][accept*="mp4"]',
@@ -326,6 +341,15 @@ class TikTokUploader:
                 'input[name*="file"]',
                 '[data-e2e="upload-input"]',
                 '[class*="upload"] input[type="file"]',
+                # Selector tambahan untuk TikTok Studio
+                'input[accept="video/*"]',
+                'input[accept=".mp4,.mov,.avi,.webm"]',
+                '#upload-input',
+                '.upload-input',
+                '[class*="file-select"] input',
+                '[class*="FileSelect"] input',
+                '[class*="uploader"] input[type="file"]',
+                '[class*="Uploader"] input[type="file"]',
             ]
             
             # Coba cari di semua frame
@@ -401,9 +425,14 @@ class TikTokUploader:
                     except:
                         continue
             
-            # Screenshot setelah pencarian (simpan ke logs folder)
+            # Screenshot setelah pencarian (simpan ke logs folder dan kirim ke Telegram)
             try:
-                await self.page.screenshot(path=str(LOGS_DIR / "debug_after_search.png"))
+                after_search_path = LOGS_DIR / "debug_after_search.png"
+                await self.page.screenshot(path=str(after_search_path))
+                await send_debug_screenshot_to_telegram(
+                    after_search_path,
+                    caption="🔍 After Search - Mencari upload input"
+                )
             except:
                 pass
             
@@ -414,6 +443,14 @@ class TikTokUploader:
                     with open(str(COOKIES_DIR / "debug_page.html"), "w", encoding="utf-8") as f:
                         f.write(html_content)
                     logger.info("Page HTML saved to debug_page.html")
+                    
+                    # Kirim screenshot error ke Telegram
+                    error_input_path = LOGS_DIR / "debug_input_not_found.png"
+                    await self.page.screenshot(path=str(error_input_path))
+                    await send_debug_screenshot_to_telegram(
+                        error_input_path,
+                        caption="❌ Upload Input Not Found - File input tidak ditemukan di halaman"
+                    )
                 except:
                     pass
                 return False, "Upload input tidak ditemukan - cek debug_page.html dan screenshot"
