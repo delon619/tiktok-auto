@@ -23,13 +23,9 @@ import random
 from pathlib import Path
 from datetime import datetime
 
-try:
-    # Windows-specific untuk decrypt cookies Chrome
-    import win32crypt
-    from Cryptodome.Cipher import AES
-    HAS_WIN_CRYPTO = True
-except ImportError:
-    HAS_WIN_CRYPTO = False
+# Note: win32crypt dan Cryptodome dibutuhkan untuk decrypt cookies Chrome di Windows
+# Fitur ini belum diimplementasi sepenuhnya, jadi import dihapus untuk saat ini
+# Jika perlu decrypt cookies, install: pip install pywin32 pycryptodomex
 
 from playwright.async_api import async_playwright, Browser, BrowserContext
 
