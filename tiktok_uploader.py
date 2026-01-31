@@ -424,6 +424,85 @@ class TikTokUploader:
         
         return False, "Timeout waiting for video processing"
     
+    async def _wait_for_content_checks(self, timeout: int = 60) -> bool:
+        """
+        Tunggu sampai Content checks selesai (Music copyright check & Content check lite)
+        TikTok perlu waktu untuk check content sebelum bisa Post
+        """
+        logger.info("Waiting for content checks to complete...")
+        start_time = asyncio.get_event_loop().time()
+        
+        while (asyncio.get_event_loop().time() - start_time) < timeout:
+            try:
+                # Cari text "No issues found" - artinya check sudah selesai
+                no_issues = await self.page.query_selector_all('text="No issues found"')
+                visible_count = 0
+                for elem in no_issues:
+                    if await elem.is_visible():
+                        visible_count += 1
+                
+                # Jika ada 2 "No issues found" (Music + Content), checks selesai
+                if visible_count >= 2:
+                    logger.info("Content checks completed: No issues found")
+                    return True
+                
+                # Cari juga green checkmark icons
+                check_icons = await self.page.query_selector_all('[class*="check"], [class*="Check"], [class*="success"], [class*="Success"]')
+                green_count = 0
+                for icon in check_icons:
+                    try:
+                        if await icon.is_visible():
+                            # Cek apakah di area Checks
+                            parent_text = await icon.evaluate('el => el.closest("div").textContent')
+                            if parent_text and ('copyright' in parent_text.lower() or 'content' in parent_text.lower()):
+                                green_count += 1
+                    except:
+                        continue
+                
+                if green_count >= 2:
+                    logger.info("Content checks completed: Green checkmarks found")
+                    return True
+                
+            except Exception as e:
+                logger.debug(f"Check iteration error: {e}")
+            
+            elapsed = int(asyncio.get_event_loop().time() - start_time)
+            if elapsed % 10 == 0 and elapsed > 0:
+                logger.info(f"Still waiting for content checks... ({elapsed}s)")
+            
+            await asyncio.sleep(2)
+        
+        logger.warning("Content checks did not complete in time, proceeding anyway...")
+        return True  # Proceed anyway
+    
+    async def _simulate_human_behavior(self):
+        """Simulasi perilaku manusia: scroll, mouse move, dll"""
+        try:
+            # Random scroll
+            await self.page.evaluate('''() => {
+                window.scrollBy(0, Math.random() * 100 + 50);
+            }''')
+            await self._delay(0.5, 1)
+            
+            # Scroll back
+            await self.page.evaluate('''() => {
+                window.scrollBy(0, -(Math.random() * 50 + 25));
+            }''')
+            await self._delay(0.3, 0.6)
+            
+            # Random mouse movement
+            viewport = await self.page.viewport_size
+            if viewport:
+                for _ in range(random.randint(2, 4)):
+                    x = random.randint(100, viewport['width'] - 100)
+                    y = random.randint(100, viewport['height'] - 100)
+                    await self.page.mouse.move(x, y)
+                    await self._delay(0.1, 0.3)
+            
+            logger.debug("Human behavior simulation completed")
+        except Exception as e:
+            logger.debug(f"Human behavior simulation error: {e}")
+    
     async def _check_for_errors(self) -> Optional[str]:
         """Cek error messages di halaman"""
         error_selectors = [
@@ -921,14 +1000,28 @@ class TikTokUploader:
             await self._close_popups()
             await self._delay(1, 2)
             
-            # 9. Screenshot sebelum post
+            # 9. PENTING: Tunggu content checks selesai (Music copyright & Content check)
+            logger.info("Step 7: Waiting for content checks...")
+            await self._wait_for_content_checks(timeout=60)
+            await self._delay(2, 3)
+            
+            # 10. Simulasi human behavior
+            logger.info("Simulating human behavior...")
+            await self._simulate_human_behavior()
+            await self._delay(2, 4)
+            
+            # 11. Screenshot sebelum post
             await self._take_screenshot("04_before_post", send_telegram=True)
             
-            # 10. Cari dan klik tombol Post
-            logger.info("Step 7: Finding Post button...")
+            # 12. Cari dan klik tombol Post
+            logger.info("Step 8: Finding Post button...")
             
-            # Delay seperti user yang review
-            await self._delay(5, 8)
+            # Delay lebih lama seperti user yang review konten
+            await self._delay(8, 12)
+            
+            # Simulasi scroll ke bawah untuk lihat Post button
+            await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+            await self._delay(1, 2)
             
             post_button = await self._find_post_button()
             
@@ -936,8 +1029,9 @@ class TikTokUploader:
                 await self._take_screenshot("post_button_not_found")
                 return False, "Tombol Post tidak ditemukan"
             
-            # 11. Klik Post
-            logger.info("Step 8: Clicking Post button...")
+            # 13. Klik Post dengan delay
+            logger.info("Step 9: Clicking Post button...")
+            await self._delay(1, 2)  # Delay sebelum klik
             clicked = await self._safe_click(post_button, "Post button")
             
             if not clicked:
@@ -958,13 +1052,16 @@ class TikTokUploader:
             # Cek apakah ada error "Something went wrong"
             error_handled = await self._handle_upload_error()
             if error_handled:
-                # Error ditemukan dan di-dismiss, coba klik Post lagi
-                logger.info("Error detected after Post click, retrying...")
-                await self._delay(3, 5)
+                # Error ditemukan dan di-dismiss, tunggu lama dan coba lagi
+                logger.info("Error detected, waiting longer and retrying...")
+                await self._delay(10, 15)  # Tunggu lebih lama
+                await self._simulate_human_behavior()
+                await self._delay(5, 8)
+                
                 post_button = await self._find_post_button()
                 if post_button:
                     await self._safe_click(post_button, "Post button (retry after error)")
-                    await self._delay(3, 5)
+                    await self._delay(5, 8)
                     # Cek popup lagi setelah retry
                     await self._handle_continue_to_post_popup()
             
