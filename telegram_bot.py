@@ -308,21 +308,21 @@ async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Import dan jalankan uploader
     try:
-        from tiktok_uploader import upload_video
+        from tiktok_uploader import upload_single_video
         
         video_path = VIDEOS_DIR / next_video["filename"]
         caption = next_video["caption"] or TIKTOK_DEFAULT_CAPTION
         
         if not video_path.exists():
-            db.update_video_status(next_video["id"], STATUS_FAILED, "File tidak ditemukan")
+            db.update_status(next_video["id"], STATUS_FAILED, "File tidak ditemukan")
             await update.message.reply_text(f"❌ File tidak ditemukan: `{next_video['filename']}`", parse_mode="Markdown")
             return
         
         # Jalankan upload
-        success = await upload_video(str(video_path), caption)
+        success, message = await upload_single_video(str(video_path), caption)
         
         if success:
-            db.update_video_status(next_video["id"], STATUS_POSTED)
+            db.update_status(next_video["id"], STATUS_POSTED)
             await update.message.reply_text(
                 f"✅ *Upload berhasil!*\n\n"
                 f"📁 File: `{next_video['filename']}`\n"
@@ -331,10 +331,11 @@ async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             logger.info(f"Manual upload successful: {next_video['filename']}")
         else:
-            db.update_video_status(next_video["id"], STATUS_FAILED, "Upload gagal")
+            db.update_status(next_video["id"], STATUS_FAILED, message)
             await update.message.reply_text(
                 f"❌ *Upload gagal!*\n\n"
                 f"📁 File: `{next_video['filename']}`\n"
+                f"Reason: {message}\n"
                 f"Gunakan /debug untuk lihat screenshot error.",
                 parse_mode="Markdown"
             )
@@ -342,7 +343,7 @@ async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
     except Exception as e:
         logger.error(f"Error during manual upload: {e}")
-        db.update_video_status(next_video["id"], STATUS_FAILED, str(e))
+        db.update_status(next_video["id"], STATUS_FAILED, str(e))
         await update.message.reply_text(
             f"❌ *Error saat upload:*\n`{str(e)[:200]}`",
             parse_mode="Markdown"
