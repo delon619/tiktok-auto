@@ -395,16 +395,21 @@ async def run_bot():
     
     logger.info("Starting Telegram bot...")
     
+    # PENTING: Tunggu dulu agar container lama sempat shutdown
+    # Ini mengatasi masalah rolling deployment di CapRover
+    startup_delay = int(os.environ.get("BOT_STARTUP_DELAY", "10"))
+    logger.info(f"Waiting {startup_delay}s for old instance to shutdown...")
+    await asyncio.sleep(startup_delay)
+    
     # Initialize and start
     await application.initialize()
     await application.start()
     
-    # PENTING: Hapus webhook yang mungkin aktif dari instance lain
-    # dan tunggu sebentar untuk memastikan instance lain berhenti
+    # Hapus webhook yang mungkin aktif
     logger.info("Clearing any existing webhooks...")
     try:
         await application.bot.delete_webhook(drop_pending_updates=True)
-        await asyncio.sleep(2)  # Tunggu instance lain selesai
+        await asyncio.sleep(3)
     except Exception as e:
         logger.warning(f"Failed to delete webhook: {e}")
     
