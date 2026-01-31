@@ -457,6 +457,75 @@ class TikTokUploader:
         
         return None
     
+    async def _handle_upload_error(self) -> bool:
+        """
+        Handle error seperti 'Something went wrong' dengan dismiss dan retry
+        Returns True jika error ditemukan dan di-handle
+        """
+        error_texts = [
+            'something went wrong',
+            'try again',
+            'replace it with a different video',
+            'coba lagi',
+            'terjadi kesalahan',
+        ]
+        
+        try:
+            # Cari error message
+            all_text = await self.page.query_selector_all('[class*="toast"], [class*="Toast"], [class*="notification"], [class*="Notification"], [class*="error"], [class*="Error"], [class*="modal"], [class*="Modal"], [role="alert"], [role="dialog"]')
+            
+            for elem in all_text:
+                try:
+                    if not await elem.is_visible():
+                        continue
+                    text = await elem.text_content()
+                    if not text:
+                        continue
+                    text_lower = text.lower()
+                    
+                    if any(err in text_lower for err in error_texts):
+                        logger.warning(f"Found error message: {text[:100]}")
+                        await self._take_screenshot("error_message_detected")
+                        
+                        # Coba dismiss dengan klik di luar atau cari tombol close
+                        dismiss_selectors = [
+                            'button:has-text("OK")',
+                            'button:has-text("Close")',
+                            'button:has-text("Tutup")',
+                            'button:has-text("Cancel")',
+                            '[class*="close"]',
+                            '[class*="Close"]',
+                            '[aria-label="Close"]',
+                            '[class*="dismiss"]',
+                        ]
+                        
+                        dismissed = False
+                        for selector in dismiss_selectors:
+                            try:
+                                close_btn = await self.page.query_selector(selector)
+                                if close_btn and await close_btn.is_visible():
+                                    await close_btn.click()
+                                    logger.info(f"Dismissed error with: {selector}")
+                                    dismissed = True
+                                    await self._delay(1, 2)
+                                    break
+                            except:
+                                continue
+                        
+                        if not dismissed:
+                            # Tekan Escape untuk dismiss
+                            await self.page.keyboard.press('Escape')
+                            logger.info("Pressed Escape to dismiss error")
+                            await self._delay(1, 2)
+                        
+                        return True
+                except:
+                    continue
+        except Exception as e:
+            logger.error(f"Error in _handle_upload_error: {e}")
+        
+        return False
+    
     async def _input_caption(self, caption: str) -> bool:
         """Input caption ke video"""
         logger.info("Adding caption...")
@@ -815,6 +884,18 @@ class TikTokUploader:
                     clicked = await self._safe_click(post_button, "Post button (retry)")
             
             await self._delay(3, 5)
+            
+            # Cek apakah ada error "Something went wrong"
+            error_handled = await self._handle_upload_error()
+            if error_handled:
+                # Error ditemukan dan di-dismiss, coba klik Post lagi
+                logger.info("Error detected after Post click, retrying...")
+                await self._delay(3, 5)
+                post_button = await self._find_post_button()
+                if post_button:
+                    await self._safe_click(post_button, "Post button (retry after error)")
+                    await self._delay(3, 5)
+            
             await self._take_screenshot("05_after_post_click", send_telegram=True)
             
             # 12. Tunggu upload selesai
