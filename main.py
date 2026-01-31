@@ -56,33 +56,53 @@ class TikTokAutoSystem:
     
     async def _run_telegram_bot(self):
         """Jalankan Telegram bot"""
+        import os
         from telegram.error import Conflict
+        
+        # PENTING: Tunggu dulu agar container lama sempat shutdown
+        # Ini mengatasi masalah rolling deployment di CapRover
+        startup_delay = int(os.environ.get("BOT_STARTUP_DELAY", "15"))
+        logger.info(f"Waiting {startup_delay}s for old instance to shutdown...")
+        await asyncio.sleep(startup_delay)
         
         self.telegram_app = create_bot_application()
         
         await self.telegram_app.initialize()
         await self.telegram_app.start()
         
+        # Hapus webhook yang mungkin aktif
+        logger.info("Clearing any existing webhooks...")
+        try:
+            await self.telegram_app.bot.delete_webhook(drop_pending_updates=True)
+            await asyncio.sleep(3)
+        except Exception as e:
+            logger.warning(f"Failed to delete webhook: {e}")
+        
         # Drop pending updates and handle conflict with retry
-        max_retries = 3
-        retry_delay = 5  # seconds
+        max_retries = 5
+        base_delay = 5  # seconds
         
         for attempt in range(max_retries):
             try:
+                logger.info(f"Starting polling (attempt {attempt + 1}/{max_retries})...")
                 await self.telegram_app.updater.start_polling(
                     drop_pending_updates=True,
-                    allowed_updates=["message", "callback_query"]
+                    allowed_updates=["message", "callback_query"],
+                    read_timeout=30,
+                    write_timeout=30,
+                    connect_timeout=30,
+                    pool_timeout=30
                 )
                 logger.info("Telegram bot started!")
                 break
             except Conflict as e:
-                logger.warning(f"Bot conflict detected (attempt {attempt + 1}/{max_retries}): {e}")
                 if attempt < max_retries - 1:
-                    logger.info(f"Waiting {retry_delay}s before retry...")
-                    await asyncio.sleep(retry_delay)
-                    retry_delay *= 2  # Exponential backoff
+                    delay = base_delay * (2 ** attempt)  # Exponential backoff: 5, 10, 20, 40, 80
+                    logger.warning(f"Bot conflict detected! Another instance running.")
+                    logger.warning(f"Waiting {delay}s before retry... (attempt {attempt + 1}/{max_retries})")
+                    await asyncio.sleep(delay)
                 else:
-                    logger.error("Failed to start bot after max retries. Another instance may be running.")
+                    logger.error("Max retries reached. Please ensure only ONE bot instance is running!")
                     raise
         
         try:
