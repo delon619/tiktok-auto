@@ -85,6 +85,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 • /start - Mulai bot
 • /status - Statistik video (pending/posted/failed)
 • /queue - Lihat antrian video pending
+• /uploadnow - 🚀 Upload video sekarang (tanpa tunggu jadwal)
 • /debug - Lihat screenshot debug terbaru
 • /clearall - Hapus SEMUA video dari database
 • /clearpending - Hapus semua video pending
@@ -274,6 +275,80 @@ async def queue_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(queue_text, parse_mode="Markdown")
 
 
+async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handler untuk /uploadnow - trigger upload manual tanpa menunggu jadwal"""
+    if not is_authorized(update.effective_user.id):
+        return
+    
+    user_id = update.effective_user.id
+    
+    # Cek apakah ada video pending
+    pending_count = db.get_pending_count()
+    
+    if pending_count == 0:
+        await update.message.reply_text("📭 Tidak ada video pending untuk diupload.\n\nKirim video terlebih dahulu!")
+        return
+    
+    # Ambil video pertama dari queue
+    next_video = db.get_next_pending()
+    
+    if not next_video:
+        await update.message.reply_text("❌ Gagal mengambil video dari queue.")
+        return
+    
+    await update.message.reply_text(
+        f"🚀 *Memulai upload manual...*\n\n"
+        f"📁 File: `{next_video['filename']}`\n"
+        f"📝 Caption: {next_video['caption'][:50] if next_video['caption'] else 'Default'}...\n\n"
+        f"⏳ Proses upload dimulai, mohon tunggu...",
+        parse_mode="Markdown"
+    )
+    
+    logger.info(f"Manual upload triggered by user {user_id} for video: {next_video['filename']}")
+    
+    # Import dan jalankan uploader
+    try:
+        from tiktok_uploader import upload_video
+        
+        video_path = VIDEOS_DIR / next_video["filename"]
+        caption = next_video["caption"] or TIKTOK_DEFAULT_CAPTION
+        
+        if not video_path.exists():
+            db.update_video_status(next_video["id"], STATUS_FAILED, "File tidak ditemukan")
+            await update.message.reply_text(f"❌ File tidak ditemukan: `{next_video['filename']}`", parse_mode="Markdown")
+            return
+        
+        # Jalankan upload
+        success = await upload_video(str(video_path), caption)
+        
+        if success:
+            db.update_video_status(next_video["id"], STATUS_POSTED)
+            await update.message.reply_text(
+                f"✅ *Upload berhasil!*\n\n"
+                f"📁 File: `{next_video['filename']}`\n"
+                f"📊 Sisa antrian: {pending_count - 1} video",
+                parse_mode="Markdown"
+            )
+            logger.info(f"Manual upload successful: {next_video['filename']}")
+        else:
+            db.update_video_status(next_video["id"], STATUS_FAILED, "Upload gagal")
+            await update.message.reply_text(
+                f"❌ *Upload gagal!*\n\n"
+                f"📁 File: `{next_video['filename']}`\n"
+                f"Gunakan /debug untuk lihat screenshot error.",
+                parse_mode="Markdown"
+            )
+            logger.error(f"Manual upload failed: {next_video['filename']}")
+            
+    except Exception as e:
+        logger.error(f"Error during manual upload: {e}")
+        db.update_video_status(next_video["id"], STATUS_FAILED, str(e))
+        await update.message.reply_text(
+            f"❌ *Error saat upload:*\n`{str(e)[:200]}`",
+            parse_mode="Markdown"
+        )
+
+
 async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handler untuk video yang dikirim"""
     user = update.effective_user
@@ -372,6 +447,7 @@ def create_bot_application() -> Application:
     application.add_handler(CommandHandler("clearall", clearall_command))
     application.add_handler(CommandHandler("clearpending", clearpending_command))
     application.add_handler(CommandHandler("clearfailed", clearfailed_command))
+    application.add_handler(CommandHandler("uploadnow", uploadnow_command))
     
     # Video handler
     application.add_handler(MessageHandler(
