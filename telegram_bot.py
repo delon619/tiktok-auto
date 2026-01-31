@@ -399,21 +399,42 @@ async def run_bot():
     await application.initialize()
     await application.start()
     
-    # drop_pending_updates=True untuk abaikan pesan lama
-    # allowed_updates untuk filter update yang diterima
-    # Retry jika ada konflik dengan instance lain
-    max_retries = 3
+    # PENTING: Hapus webhook yang mungkin aktif dari instance lain
+    # dan tunggu sebentar untuk memastikan instance lain berhenti
+    logger.info("Clearing any existing webhooks...")
+    try:
+        await application.bot.delete_webhook(drop_pending_updates=True)
+        await asyncio.sleep(2)  # Tunggu instance lain selesai
+    except Exception as e:
+        logger.warning(f"Failed to delete webhook: {e}")
+    
+    # Retry dengan exponential backoff jika ada konflik
+    max_retries = 5
+    base_delay = 3
+    
     for attempt in range(max_retries):
         try:
+            logger.info(f"Starting polling (attempt {attempt + 1}/{max_retries})...")
             await application.updater.start_polling(
                 drop_pending_updates=True,
-                allowed_updates=["message", "callback_query"]
+                allowed_updates=["message", "callback_query"],
+                read_timeout=30,
+                write_timeout=30,
+                connect_timeout=30,
+                pool_timeout=30
             )
             break
         except Exception as e:
-            if "Conflict" in str(e) and attempt < max_retries - 1:
-                logger.warning(f"Conflict detected, retrying in 5 seconds... (attempt {attempt + 1})")
-                await asyncio.sleep(5)
+            if "Conflict" in str(e):
+                if attempt < max_retries - 1:
+                    delay = base_delay * (2 ** attempt)  # Exponential backoff: 3, 6, 12, 24, 48
+                    logger.warning(f"Conflict detected! Another bot instance is running.")
+                    logger.warning(f"Waiting {delay}s before retry... (attempt {attempt + 1}/{max_retries})")
+                    await asyncio.sleep(delay)
+                else:
+                    logger.error("Max retries reached. Please ensure only ONE bot instance is running!")
+                    logger.error("Stop the local bot or other deployments using the same token.")
+                    raise
             else:
                 raise
     
