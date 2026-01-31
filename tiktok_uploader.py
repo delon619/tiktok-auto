@@ -526,6 +526,70 @@ class TikTokUploader:
         
         return False
     
+    async def _handle_continue_to_post_popup(self) -> bool:
+        """
+        Handle popup 'Continue to post?' yang muncul saat video masih dicek
+        Klik 'Post now' untuk lanjut posting
+        Returns True jika popup ditemukan dan di-handle
+        """
+        try:
+            # Cek apakah ada popup "Continue to post?"
+            popup_texts = ['continue to post', 'post now', 'still checking']
+            
+            # Cari dialog/modal
+            dialogs = await self.page.query_selector_all('[role="dialog"], [class*="modal"], [class*="Modal"], [class*="popup"], [class*="Popup"], [class*="dialog"], [class*="Dialog"]')
+            
+            for dialog in dialogs:
+                try:
+                    if not await dialog.is_visible():
+                        continue
+                    text = await dialog.text_content()
+                    if not text:
+                        continue
+                    text_lower = text.lower()
+                    
+                    if any(pt in text_lower for pt in popup_texts):
+                        logger.info("Found 'Continue to post?' popup")
+                        
+                        # Cari tombol "Post now"
+                        post_now_selectors = [
+                            'button:has-text("Post now")',
+                            'button:has-text("Post Now")',
+                            'button:has-text("Posting")',
+                            '[class*="primary"]:has-text("Post")',
+                            '[class*="confirm"]:has-text("Post")',
+                        ]
+                        
+                        for selector in post_now_selectors:
+                            try:
+                                btn = await self.page.query_selector(selector)
+                                if btn and await btn.is_visible():
+                                    await btn.click()
+                                    logger.info(f"Clicked 'Post now' button")
+                                    await self._delay(2, 3)
+                                    return True
+                            except:
+                                continue
+                        
+                        # Fallback: cari button dengan warna pink/merah (primary button)
+                        buttons = await dialog.query_selector_all('button')
+                        for btn in buttons:
+                            try:
+                                btn_text = await btn.text_content()
+                                if btn_text and 'post' in btn_text.lower() and 'cancel' not in btn_text.lower():
+                                    await btn.click()
+                                    logger.info(f"Clicked button: {btn_text}")
+                                    await self._delay(2, 3)
+                                    return True
+                            except:
+                                continue
+                except:
+                    continue
+        except Exception as e:
+            logger.error(f"Error in _handle_continue_to_post_popup: {e}")
+        
+        return False
+    
     async def _input_caption(self, caption: str) -> bool:
         """Input caption ke video"""
         logger.info("Adding caption...")
@@ -885,6 +949,12 @@ class TikTokUploader:
             
             await self._delay(3, 5)
             
+            # Cek apakah ada popup "Continue to post?" dan klik "Post now"
+            popup_handled = await self._handle_continue_to_post_popup()
+            if popup_handled:
+                logger.info("Handled 'Continue to post?' popup")
+                await self._delay(3, 5)
+            
             # Cek apakah ada error "Something went wrong"
             error_handled = await self._handle_upload_error()
             if error_handled:
@@ -895,6 +965,8 @@ class TikTokUploader:
                 if post_button:
                     await self._safe_click(post_button, "Post button (retry after error)")
                     await self._delay(3, 5)
+                    # Cek popup lagi setelah retry
+                    await self._handle_continue_to_post_popup()
             
             await self._take_screenshot("05_after_post_click", send_telegram=True)
             
