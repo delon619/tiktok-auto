@@ -534,42 +534,80 @@ class TikTokUploader:
             try:
                 # Scroll ke bawah agar area Checks terlihat
                 await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(1)
                 
-                # Method 1: Cari text "No issues found" via page content
-                page_text = await self.page.evaluate('() => document.body.innerText')
+                # ==== Method 1: textContent (paling reliable, termasuk hidden text) ====
+                page_text = await self.page.evaluate('() => document.body.textContent')
+                page_lower = page_text.lower()
                 
-                # Hitung berapa kali "No issues found" muncul
-                no_issues_count = page_text.lower().count('no issues found')
+                no_issues_count = page_lower.count('no issues found')
+                logger.debug(f"textContent 'no issues found' count: {no_issues_count}")
+                
                 if no_issues_count >= 2:
-                    logger.info(f"Content checks completed: Found {no_issues_count}x 'No issues found' in page text")
+                    logger.info(f"Content checks completed: Found {no_issues_count}x 'No issues found' via textContent")
                     return True
                 
-                # Method 2: Cek jika ada "No issues found." elements visible
-                no_issues_elements = await self.page.query_selector_all('text=/No issues found/')
-                visible_count = 0
-                for elem in no_issues_elements:
-                    try:
-                        if await elem.is_visible():
-                            visible_count += 1
-                    except:
-                        continue
+                # ==== Method 2: innerText (CSS-aware) ====
+                inner_text = await self.page.evaluate('() => document.body.innerText')
+                inner_lower = inner_text.lower()
+                inner_count = inner_lower.count('no issues found')
                 
-                if visible_count >= 2:
-                    logger.info(f"Content checks completed: {visible_count} visible 'No issues found' elements")
+                if inner_count >= 2:
+                    logger.info(f"Content checks completed: Found {inner_count}x 'No issues found' via innerText")
                     return True
                 
-                # Method 3: Cek apakah ada teks spesifik dari kedua checks
-                has_music_check = 'music copyright check' in page_text.lower()
-                has_content_check = 'content check' in page_text.lower()
-                has_no_issues = no_issues_count >= 1
+                # ==== Method 3: Query specific check elements ====
+                check_result = await self.page.evaluate('''() => {
+                    // Cari semua elemen yang mengandung "No issues found"
+                    const walker = document.createTreeWalker(
+                        document.body,
+                        NodeFilter.SHOW_TEXT,
+                        {acceptNode: (node) => node.textContent.toLowerCase().includes('no issues found') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT}
+                    );
+                    let count = 0;
+                    while (walker.nextNode()) count++;
+                    
+                    // Juga cek via querySelectorAll
+                    const spans = document.querySelectorAll('span, p, div');
+                    let elemCount = 0;
+                    for (const el of spans) {
+                        const text = el.textContent.toLowerCase().trim();
+                        if (text.startsWith('no issues found') && text.length < 200) {
+                            elemCount++;
+                        }
+                    }
+                    
+                    return {treeWalker: count, elements: elemCount};
+                }''')
+                logger.debug(f"Content check JS result: {check_result}")
                 
-                if has_music_check and has_content_check and has_no_issues:
-                    # Setidaknya satu check selesai, tunggu sedikit lagi untuk yang kedua
-                    await asyncio.sleep(5)
-                    page_text2 = await self.page.evaluate('() => document.body.innerText')
-                    if page_text2.lower().count('no issues found') >= 2:
+                if check_result and (check_result.get('treeWalker', 0) >= 2 or check_result.get('elements', 0) >= 2):
+                    logger.info(f"Content checks completed via JS: {check_result}")
+                    return True
+                
+                # ==== Method 4: Cek header checks + minimal 1 no issues ====
+                has_music = 'music copyright' in page_lower or 'music copyright' in inner_lower
+                has_content = 'content check' in page_lower or 'content check' in inner_lower
+                total_no_issues = max(no_issues_count, inner_count)
+                
+                if has_music and has_content and total_no_issues >= 1:
+                    # Kedua check terlihat, minimal 1 sudah pass
+                    logger.info(f"Both checks visible, {total_no_issues} passed. Waiting 8s for the other...")
+                    await asyncio.sleep(8)
+                    # Re-check
+                    recheck = await self.page.evaluate('() => document.body.textContent.toLowerCase()')
+                    if recheck.count('no issues found') >= 2:
                         logger.info("Content checks completed after extra wait")
+                        return True
+                    # Jika masih 1, tunggu sekali lagi
+                    await asyncio.sleep(8)
+                    recheck2 = await self.page.evaluate('() => document.body.textContent.toLowerCase()')
+                    if recheck2.count('no issues found') >= 2:
+                        logger.info("Content checks completed after second wait")
+                        return True
+                    if recheck2.count('no issues found') >= 1:
+                        # Sudah lama menunggu, 1 check sudah pass, lanjut saja
+                        logger.warning("Only 1 content check passed, but proceeding anyway")
                         return True
                 
             except Exception as e:
@@ -577,24 +615,28 @@ class TikTokUploader:
             
             elapsed = int(asyncio.get_event_loop().time() - start_time)
             if elapsed % 15 == 0 and elapsed > 0:
-                logger.info(f"Still waiting for content checks... ({elapsed}s) [found {no_issues_count if 'no_issues_count' in dir() else '?'} 'No issues found']")
-                await self._take_screenshot(f"content_check_{elapsed}s", send_telegram=False)
+                logger.info(f"Still waiting for content checks... ({elapsed}s)")
             
             await asyncio.sleep(3)
         
-        # Timeout - cek sekali lagi
+        # Timeout - cek terakhir dengan semua method
         try:
-            final_text = await self.page.evaluate('() => document.body.innerText')
-            final_count = final_text.lower().count('no issues found')
+            final_text = await self.page.evaluate('() => document.body.textContent.toLowerCase()')
+            final_count = final_text.count('no issues found')
             if final_count >= 1:
-                logger.warning(f"Content checks timeout but found {final_count} 'No issues found', proceeding...")
+                logger.warning(f"Content checks timeout but found {final_count} 'No issues found', proceeding anyway")
                 return True
+            
+            # Cek apakah checks area ada tapi belum selesai
+            has_checks = 'checks' in final_text or 'copyright' in final_text
+            if has_checks:
+                logger.warning("Checks area found but not completed. Proceeding anyway - Post might show error")
+                return True  # Biar Post button di-klik, error akan di-handle oleh retry loop
         except:
             pass
         
-        logger.warning("Content checks did not complete in time")
-        await self._take_screenshot("content_checks_timeout", send_telegram=True)
-        return False
+        logger.warning("Content checks did not complete in time - proceeding anyway")
+        return True  # SELALU return True - biar retry loop handle error
     
     async def _simulate_human_behavior(self):
         """Simulasi perilaku manusia: scroll, mouse move, dll"""
@@ -625,43 +667,26 @@ class TikTokUploader:
             logger.debug(f"Human behavior simulation error: {e}")
     
     async def _check_for_errors(self) -> Optional[str]:
-        """Cek error messages di halaman"""
-        # Cari elemen yang kemungkinan besar berisi pesan error
-        error_selectors = [
-            '[role="alert"]',
-            '[class*="toast"][class*="error"]',
-            '[class*="Toast"][class*="error"]',
-            '[class*="error-message"]',
-            '[class*="ErrorMessage"]',
-            '[class*="snackbar"][class*="error"]',
-        ]
-        
-        error_keywords = [
-            'something went wrong', 'failed', 'gagal', 'tidak dapat', 'cannot', 
-            'try again', 'coba lagi', 'kesalahan', 'rejected', 'ditolak',
-            'video cannot be uploaded', 'upload failed', 'network error',
-        ]
-        
-        for selector in error_selectors:
-            try:
-                elements = await self.page.query_selector_all(selector)
-                for elem in elements:
-                    try:
-                        if not await elem.is_visible():
-                            continue
-                        text = await elem.text_content()
-                        if text:
-                            text_lower = text.lower().strip()
-                            # Skip teks yang terlalu pendek atau terlalu panjang (bukan error message)
-                            if len(text_lower) < 5 or len(text_lower) > 500:
-                                continue
-                            for keyword in error_keywords:
-                                if keyword in text_lower:
-                                    return text.strip()[:200]
-                    except:
-                        continue
-            except:
-                continue
+        """Cek error messages di halaman - HANYA error yang jelas"""
+        try:
+            # Cari lewat page text - paling reliable
+            page_text = await self.page.evaluate('() => document.body.innerText.substring(0, 5000)')
+            page_lower = page_text.lower()
+            
+            # Hanya cek phrase yang PASTI error (bukan kata umum seperti 'failed')
+            critical_errors = [
+                'something went wrong',
+                'video cannot be uploaded',
+                'upload failed',
+                'network error',
+                'session expired',
+            ]
+            
+            for phrase in critical_errors:
+                if phrase in page_lower:
+                    return phrase
+        except:
+            pass
         
         return None
     
@@ -1141,6 +1166,7 @@ class TikTokUploader:
         logger.info("Waiting for upload to complete...")
         start_time = asyncio.get_event_loop().time()
         last_screenshot_time = 0
+        post_reclicked = False
         
         # URL patterns yang menandakan SUKSES (sudah di-redirect ke halaman content)
         success_patterns = [
@@ -1150,77 +1176,127 @@ class TikTokUploader:
             '/profile',
             '/@',
         ]
-        # URL patterns halaman upload (BUKAN sukses)
-        upload_patterns = ['/upload', 'studio/upload', 'creator-center/upload']
+        # URL patterns halaman upload (masih di upload page)
+        upload_patterns = ['/upload']
+        
+        initial_url = self.page.url
+        logger.info(f"Initial URL after Post click: {initial_url}")
         
         while (asyncio.get_event_loop().time() - start_time) < timeout:
             current_url = self.page.url
             current_url_lower = current_url.lower()
             elapsed = int(asyncio.get_event_loop().time() - start_time)
             
-            # Cek apakah URL sekarang adalah halaman sukses
-            is_upload_page = any(u in current_url_lower for u in upload_patterns)
+            # ==== Check 1: URL changed to success page ====
+            is_upload_page = '/upload' in current_url_lower and '/content' not in current_url_lower
             is_success_page = any(p in current_url_lower for p in success_patterns)
             
             if is_success_page and not is_upload_page:
-                logger.info(f"Upload success! URL: {current_url}")
+                logger.info(f"Upload success! URL changed to: {current_url}")
                 return True, "Video berhasil diupload ke TikTok!"
             
-            # Jika redirect ke login → session expired
+            # ==== Check 2: URL changed to anything different (not upload, not login) ====
+            if current_url != initial_url and not is_upload_page:
+                if 'login' not in current_url_lower:
+                    logger.info(f"URL changed from upload page to: {current_url} - assuming success")
+                    return True, "Video berhasil diupload ke TikTok!"
+            
+            # ==== Check 3: Login redirect = session expired ====
             if 'login' in current_url_lower and '/upload' not in current_url_lower:
                 return False, "Session expired - redirect ke login"
             
-            # Cek success messages di halaman
-            success_texts = [
-                'Your video is being uploaded',
-                'Video posted',
-                'Upload complete',
-                'Berhasil diposting',
-                'Video telah diposting',
-                'Your video has been posted',
-                'Successfully posted',
-                'Your video is now live',
-                'Manage your posts',
-                'Your videos',
-            ]
-            
-            for text in success_texts:
-                try:
-                    elem = await self.page.query_selector(f'text="{text}"')
-                    if elem and await elem.is_visible():
-                        found_text = await elem.text_content()
-                        logger.info(f"Success indicator found: {found_text}")
-                        return True, "Video berhasil diupload ke TikTok!"
-                except:
-                    continue
-            
-            # Cek lewat body text
+            # ==== Check 4: Success text in page body ====
             try:
-                page_text = await self.page.evaluate('() => document.body.innerText.substring(0, 3000)')
-                page_text_lower = page_text.lower()
-                for text in ['your video is being uploaded', 'manage your posts', 'your video has been posted', 'your videos']:
-                    if text in page_text_lower and not is_upload_page:
-                        logger.info(f"Success text found in page body: {text}")
+                page_text = await self.page.evaluate('() => document.body.textContent.substring(0, 5000).toLowerCase()')
+                success_phrases = [
+                    'your video is being uploaded',
+                    'video posted',
+                    'your video has been posted',
+                    'successfully posted',
+                    'your video is now live',
+                    'manage your posts',
+                ]
+                for phrase in success_phrases:
+                    if phrase in page_text and not is_upload_page:
+                        logger.info(f"Success text found: '{phrase}'")
                         return True, "Video berhasil diupload ke TikTok!"
             except:
                 pass
             
-            # Cek apakah ada popup "Continue to post?"
+            # ==== Check 5: Handle popups ====
             popup_handled = await self._handle_continue_to_post_popup()
             if popup_handled:
                 logger.info("Handled popup during wait")
                 await self._delay(3, 5)
             
-            # Cek error
-            error = await self._check_for_errors()
+            # ==== Check 6: "Something went wrong" error ====
+            error = await self._detect_something_went_wrong()
             if error:
-                logger.warning(f"Error detected during upload wait: {error}")
-                if elapsed > 30:
-                    return False, f"Upload error: {error}"
+                logger.warning(f"'Something went wrong' during upload wait at {elapsed}s")
+                await self._dismiss_error_toast()
+                # Jangan return false - mungkin video tetap terupload
+                # Tunggu beberapa detik dan cek URL lagi
+                await asyncio.sleep(5)
+                check_url = self.page.url.lower()
+                if any(p in check_url for p in success_patterns) and '/upload' not in check_url:
+                    logger.info("Upload actually succeeded despite error toast")
+                    return True, "Video berhasil diupload ke TikTok!"
+            
+            # ==== RE-CLICK POST jika masih di upload page setelah 45s ====
+            if is_upload_page and elapsed > 45 and not post_reclicked:
+                logger.warning(f"Still on upload page after {elapsed}s - re-clicking Post button")
+                await self._take_screenshot(f"reclick_post_{elapsed}s", send_telegram=False)
+                
+                # Re-klik Post via JavaScript (paling reliable)
+                try:
+                    js_clicked = await self.page.evaluate('''() => {
+                        const buttons = document.querySelectorAll('button');
+                        for (const btn of buttons) {
+                            const text = btn.textContent.trim().toLowerCase();
+                            if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                btn.scrollIntoView({behavior: 'smooth', block: 'center'});
+                                btn.click();
+                                return true;
+                            }
+                        }
+                        return false;
+                    }''')
+                    if js_clicked:
+                        logger.info("Re-clicked Post button via JS")
+                        post_reclicked = True
+                        await asyncio.sleep(10)  # Tunggu reaksi
+                        
+                        # Handle popup setelah re-click
+                        await self._handle_continue_to_post_popup()
+                    else:
+                        logger.warning("Could not find Post button for re-click")
+                except Exception as e:
+                    logger.debug(f"Re-click error: {e}")
+            
+            # ==== RE-CLICK POST kedua kali jika masih stuck setelah 90s ====
+            if is_upload_page and elapsed > 90 and post_reclicked:
+                logger.warning(f"Still on upload page after {elapsed}s - second re-click attempt")
+                try:
+                    await self.page.evaluate('''() => {
+                        const buttons = document.querySelectorAll('button');
+                        for (const btn of buttons) {
+                            const text = btn.textContent.trim().toLowerCase();
+                            if ((text === 'post' || text === 'posting') && !btn.disabled) {
+                                btn.click();
+                                return true;
+                            }
+                        }
+                        return false;
+                    }''')
+                    post_reclicked = False  # Reset untuk tidak trigger lagi
+                    await asyncio.sleep(10)
+                    await self._handle_continue_to_post_popup()
+                except:
+                    pass
             
             # Log progress
             if elapsed % 20 == 0 and elapsed > 0:
-                logger.info(f"Upload in progress... ({elapsed}s) URL: {current_url}")
+                logger.info(f"Upload waiting... ({elapsed}s) URL: {current_url}")
             
             # Screenshot setiap 40 detik
             if elapsed - last_screenshot_time >= 40:
@@ -1229,12 +1305,19 @@ class TikTokUploader:
             
             await asyncio.sleep(3)
         
-        # Timeout - final check: mungkin sudah sukses tapi text belum terdeteksi
-        current_url_lower = self.page.url.lower()
-        is_upload_page = any(u in current_url_lower for u in upload_patterns)
+        # ==== TIMEOUT - final checks ====
+        current_url = self.page.url
+        current_url_lower = current_url.lower()
+        is_upload_page = '/upload' in current_url_lower and '/content' not in current_url_lower
         is_success_page = any(p in current_url_lower for p in success_patterns)
+        
         if is_success_page and not is_upload_page:
-            logger.info(f"Upload success detected at timeout! URL: {self.page.url}")
+            logger.info(f"Upload success detected at timeout! URL: {current_url}")
+            return True, "Video berhasil diupload ke TikTok!"
+        
+        # Cek terakhir: mungkin URL berubah
+        if current_url != initial_url and 'login' not in current_url_lower and not is_upload_page:
+            logger.info(f"URL did change to: {current_url} - assuming success at timeout")
             return True, "Video berhasil diupload ke TikTok!"
         
         await self._take_screenshot("upload_timeout", send_telegram=True)
