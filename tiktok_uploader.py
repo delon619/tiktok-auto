@@ -521,56 +521,80 @@ class TikTokUploader:
         await self._take_screenshot("video_processing_timeout", send_telegram=True)
         return False, "Timeout waiting for video processing"
     
-    async def _wait_for_content_checks(self, timeout: int = 60) -> bool:
+    async def _wait_for_content_checks(self, timeout: int = 120) -> bool:
         """
         Tunggu sampai Content checks selesai (Music copyright check & Content check lite)
-        TikTok perlu waktu untuk check content sebelum bisa Post
+        TikTok WAJIB menyelesaikan checks sebelum Post bisa berhasil.
+        Jika Post sebelum checks selesai → "Something went wrong"
         """
         logger.info("Waiting for content checks to complete...")
         start_time = asyncio.get_event_loop().time()
         
         while (asyncio.get_event_loop().time() - start_time) < timeout:
             try:
-                # Cari text "No issues found" - artinya check sudah selesai
-                no_issues = await self.page.query_selector_all('text="No issues found"')
-                visible_count = 0
-                for elem in no_issues:
-                    if await elem.is_visible():
-                        visible_count += 1
+                # Scroll ke bawah agar area Checks terlihat
+                await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+                await asyncio.sleep(0.5)
                 
-                # Jika ada 2 "No issues found" (Music + Content), checks selesai
-                if visible_count >= 2:
-                    logger.info("Content checks completed: No issues found")
+                # Method 1: Cari text "No issues found" via page content
+                page_text = await self.page.evaluate('() => document.body.innerText')
+                
+                # Hitung berapa kali "No issues found" muncul
+                no_issues_count = page_text.lower().count('no issues found')
+                if no_issues_count >= 2:
+                    logger.info(f"Content checks completed: Found {no_issues_count}x 'No issues found' in page text")
                     return True
                 
-                # Cari juga green checkmark icons
-                check_icons = await self.page.query_selector_all('[class*="check"], [class*="Check"], [class*="success"], [class*="Success"]')
-                green_count = 0
-                for icon in check_icons:
+                # Method 2: Cek jika ada "No issues found." elements visible
+                no_issues_elements = await self.page.query_selector_all('text=/No issues found/')
+                visible_count = 0
+                for elem in no_issues_elements:
                     try:
-                        if await icon.is_visible():
-                            # Cek apakah di area Checks
-                            parent_text = await icon.evaluate('el => el.closest("div").textContent')
-                            if parent_text and ('copyright' in parent_text.lower() or 'content' in parent_text.lower()):
-                                green_count += 1
+                        if await elem.is_visible():
+                            visible_count += 1
                     except:
                         continue
                 
-                if green_count >= 2:
-                    logger.info("Content checks completed: Green checkmarks found")
+                if visible_count >= 2:
+                    logger.info(f"Content checks completed: {visible_count} visible 'No issues found' elements")
                     return True
+                
+                # Method 3: Cek apakah ada teks spesifik dari kedua checks
+                has_music_check = 'music copyright check' in page_text.lower()
+                has_content_check = 'content check' in page_text.lower()
+                has_no_issues = no_issues_count >= 1
+                
+                if has_music_check and has_content_check and has_no_issues:
+                    # Setidaknya satu check selesai, tunggu sedikit lagi untuk yang kedua
+                    await asyncio.sleep(5)
+                    page_text2 = await self.page.evaluate('() => document.body.innerText')
+                    if page_text2.lower().count('no issues found') >= 2:
+                        logger.info("Content checks completed after extra wait")
+                        return True
                 
             except Exception as e:
                 logger.debug(f"Check iteration error: {e}")
             
             elapsed = int(asyncio.get_event_loop().time() - start_time)
-            if elapsed % 10 == 0 and elapsed > 0:
-                logger.info(f"Still waiting for content checks... ({elapsed}s)")
+            if elapsed % 15 == 0 and elapsed > 0:
+                logger.info(f"Still waiting for content checks... ({elapsed}s) [found {no_issues_count if 'no_issues_count' in dir() else '?'} 'No issues found']")
+                await self._take_screenshot(f"content_check_{elapsed}s", send_telegram=False)
             
-            await asyncio.sleep(2)
+            await asyncio.sleep(3)
         
-        logger.warning("Content checks did not complete in time, proceeding anyway...")
-        return True  # Proceed anyway
+        # Timeout - cek sekali lagi
+        try:
+            final_text = await self.page.evaluate('() => document.body.innerText')
+            final_count = final_text.lower().count('no issues found')
+            if final_count >= 1:
+                logger.warning(f"Content checks timeout but found {final_count} 'No issues found', proceeding...")
+                return True
+        except:
+            pass
+        
+        logger.warning("Content checks did not complete in time")
+        await self._take_screenshot("content_checks_timeout", send_telegram=True)
+        return False
     
     async def _simulate_human_behavior(self):
         """Simulasi perilaku manusia: scroll, mouse move, dll"""
@@ -641,72 +665,104 @@ class TikTokUploader:
         
         return None
     
-    async def _handle_upload_error(self) -> bool:
+    async def _detect_something_went_wrong(self) -> bool:
         """
-        Handle error seperti 'Something went wrong' dengan dismiss dan retry
-        Returns True jika error ditemukan dan di-handle
+        Deteksi apakah ada toast/notifikasi 'Something went wrong' di halaman.
+        Returns True jika error terdeteksi.
         """
-        error_texts = [
-            'something went wrong',
-            'try again',
-            'replace it with a different video',
-            'coba lagi',
-            'terjadi kesalahan',
-        ]
-        
         try:
-            # Cari error message
-            all_text = await self.page.query_selector_all('[class*="toast"], [class*="Toast"], [class*="notification"], [class*="Notification"], [class*="error"], [class*="Error"], [class*="modal"], [class*="Modal"], [role="alert"], [role="dialog"]')
+            # Method 1: Cari lewat page text (paling reliable)
+            page_text = await self.page.evaluate('() => document.body.innerText.substring(0, 5000)')
+            error_phrases = [
+                'something went wrong',
+                'replace it with a different video',
+                'video cannot be uploaded',
+            ]
+            for phrase in error_phrases:
+                if phrase in page_text.lower():
+                    return True
             
-            for elem in all_text:
+            # Method 2: Cari lewat selectors
+            toast_selectors = [
+                '[class*="toast"]',
+                '[class*="Toast"]',
+                '[class*="Snackbar"]',
+                '[class*="snackbar"]',
+                '[class*="notification"]',
+                '[class*="Notification"]',
+                '[role="alert"]',
+                '[class*="TUXSnackbar"]',
+            ]
+            
+            for selector in toast_selectors:
                 try:
-                    if not await elem.is_visible():
-                        continue
-                    text = await elem.text_content()
-                    if not text:
-                        continue
-                    text_lower = text.lower()
+                    elements = await self.page.query_selector_all(selector)
+                    for elem in elements:
+                        if await elem.is_visible():
+                            text = await elem.text_content()
+                            if text and 'something went wrong' in text.lower():
+                                return True
+                except:
+                    continue
                     
-                    if any(err in text_lower for err in error_texts):
-                        logger.warning(f"Found error message: {text[:100]}")
-                        await self._take_screenshot("error_message_detected")
-                        
-                        # Coba dismiss dengan klik di luar atau cari tombol close
-                        dismiss_selectors = [
-                            'button:has-text("OK")',
-                            'button:has-text("Close")',
-                            'button:has-text("Tutup")',
-                            'button:has-text("Cancel")',
-                            '[class*="close"]',
-                            '[class*="Close"]',
-                            '[aria-label="Close"]',
-                            '[class*="dismiss"]',
-                        ]
-                        
-                        dismissed = False
-                        for selector in dismiss_selectors:
-                            try:
-                                close_btn = await self.page.query_selector(selector)
-                                if close_btn and await close_btn.is_visible():
-                                    await close_btn.click()
-                                    logger.info(f"Dismissed error with: {selector}")
-                                    dismissed = True
-                                    await self._delay(1, 2)
-                                    break
-                            except:
-                                continue
-                        
-                        if not dismissed:
-                            # Tekan Escape untuk dismiss
-                            await self.page.keyboard.press('Escape')
-                            logger.info("Pressed Escape to dismiss error")
-                            await self._delay(1, 2)
-                        
+        except:
+            pass
+        
+        return False
+    
+    async def _dismiss_error_toast(self) -> bool:
+        """
+        Dismiss/tutup toast error yang muncul.
+        Returns True jika berhasil dismiss.
+        """
+        try:
+            # Toast TikTok biasanya otomatis hilang dalam ~5 detik
+            # Tapi kita coba dismiss lebih cepat
+            
+            # Coba klik tombol close/dismiss
+            dismiss_selectors = [
+                '[class*="toast"] button',
+                '[class*="Toast"] button',
+                '[class*="Snackbar"] button',
+                '[class*="TUXSnackbar"] button',
+                '[role="alert"] button',
+                'button[aria-label="Close"]',
+                'button[aria-label="Dismiss"]',
+            ]
+            
+            for selector in dismiss_selectors:
+                try:
+                    btn = await self.page.query_selector(selector)
+                    if btn and await btn.is_visible():
+                        await btn.click(force=True)
+                        logger.info(f"Dismissed toast with: {selector}")
+                        await self._delay(1, 2)
                         return True
                 except:
                     continue
-        except Exception as e:
-            logger.error(f"Error in _handle_upload_error: {e}")
+            
+            # Klik di area kosong untuk dismiss
+            await self.page.mouse.click(700, 400)
+            await self._delay(1, 2)
+            
+            # Tekan Escape
+            await self.page.keyboard.press('Escape')
+            await self._delay(1, 2)
+            
+            return True
+        except:
+            return False
+    
+    async def _handle_upload_error(self) -> bool:
+        """
+        Handle error seperti 'Something went wrong' dengan dismiss dan retry.
+        Returns True jika error ditemukan dan di-handle.
+        """
+        if await self._detect_something_went_wrong():
+            logger.warning("Detected 'Something went wrong' error!")
+            await self._take_screenshot("error_something_went_wrong")
+            await self._dismiss_error_toast()
+            return True
         
         return False
     
@@ -1213,80 +1269,117 @@ class TikTokUploader:
             await self._delay(1, 2)
             
             # 9. PENTING: Tunggu content checks selesai (Music copyright & Content check)
+            # Ini KRUSIAL - jika Post sebelum checks selesai → "Something went wrong"
             logger.info("Step 7: Waiting for content checks...")
-            await self._wait_for_content_checks(timeout=60)
-            await self._delay(2, 3)
+            checks_ok = await self._wait_for_content_checks(timeout=120)
+            
+            if not checks_ok:
+                logger.warning("Content checks did not complete - upload may fail")
+                await self._take_screenshot("content_checks_incomplete")
+                # Tetap lanjut, tapi catat bahwa mungkin gagal
+            
+            await self._delay(3, 5)
             
             # 10. Simulasi human behavior
             logger.info("Simulating human behavior...")
             await self._simulate_human_behavior()
-            await self._delay(2, 4)
+            await self._delay(2, 3)
             
             # 11. Screenshot sebelum post
             await self._take_screenshot("04_before_post", send_telegram=True)
             
-            # 12. Cari dan klik tombol Post
-            logger.info("Step 8: Finding Post button...")
+            # 12. POST dengan retry loop
+            # TikTok sering menampilkan "Something went wrong" yang bisa di-retry
+            max_post_attempts = 3
+            post_success = False
             
-            # Delay seperti user yang review konten
-            await self._delay(5, 8)
-            
-            # Simulasi scroll ke bawah untuk lihat Post button
-            await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-            await self._delay(1, 2)
-            
-            post_button = await self._find_post_button()
-            
-            if not post_button:
-                # Tunggu 10 detik lagi, mungkin button belum muncul
-                logger.warning("Post button not found, waiting 10s and retrying...")
-                await self._delay(8, 12)
-                post_button = await self._find_post_button()
-            
-            if not post_button:
-                await self._take_screenshot("post_button_not_found")
-                # Coba cek apakah button disabled
-                disabled_btn = await self.page.query_selector('button:has-text("Post")[disabled]')
-                if disabled_btn:
-                    return False, "Tombol Post ditemukan tapi disabled - video mungkin masih diproses"
-                return False, "Tombol Post tidak ditemukan"
-            
-            # 13. Klik Post
-            logger.info("Step 9: Clicking Post button...")
-            await self._delay(1, 2)
-            clicked = await self._safe_click(post_button, "Post button")
-            
-            if not clicked:
+            for post_attempt in range(max_post_attempts):
+                if post_attempt > 0:
+                    logger.info(f"=== Post retry attempt {post_attempt + 1}/{max_post_attempts} ===")
+                    await send_telegram_message(f"🔄 Retry Post ({post_attempt + 1}/{max_post_attempts})...")
+                
+                # Scroll ke bawah untuk lihat Post button
+                logger.info("Step 8: Finding Post button...")
+                await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
                 await self._delay(2, 3)
-                post_button = await self._find_post_button()
-                if post_button:
-                    clicked = await self._safe_click(post_button, "Post button (retry)")
-            
-            if not clicked:
-                await self._take_screenshot("post_click_failed")
-                return False, "Gagal klik tombol Post"
-            
-            await self._delay(3, 5)
-            
-            # Handle popup "Continue to post?"
-            popup_handled = await self._handle_continue_to_post_popup()
-            if popup_handled:
-                logger.info("Handled 'Continue to post?' popup")
-                await self._delay(3, 5)
-            
-            # Handle error "Something went wrong" dengan retry
-            error_handled = await self._handle_upload_error()
-            if error_handled:
-                logger.info("Error detected, waiting and retrying Post...")
-                await self._delay(10, 15)
-                await self._simulate_human_behavior()
-                await self._delay(3, 5)
                 
                 post_button = await self._find_post_button()
-                if post_button:
-                    await self._safe_click(post_button, "Post button (retry after error)")
-                    await self._delay(5, 8)
-                    await self._handle_continue_to_post_popup()
+                
+                if not post_button:
+                    logger.warning("Post button not found, waiting and retrying...")
+                    await self._delay(8, 12)
+                    post_button = await self._find_post_button()
+                
+                if not post_button:
+                    # Coba cek apakah button disabled
+                    disabled_btn = await self.page.query_selector('button:has-text("Post")[disabled]')
+                    if disabled_btn:
+                        logger.warning("Post button is disabled, waiting for it to enable...")
+                        # Tunggu sampai button enabled
+                        for _ in range(15):
+                            await asyncio.sleep(3)
+                            post_button = await self._find_post_button()
+                            if post_button:
+                                break
+                    
+                    if not post_button:
+                        await self._take_screenshot("post_button_not_found")
+                        return False, "Tombol Post tidak ditemukan"
+                
+                # Klik Post
+                logger.info("Step 9: Clicking Post button...")
+                await self._delay(1, 2)
+                clicked = await self._safe_click(post_button, "Post button")
+                
+                if not clicked:
+                    await self._delay(2, 3)
+                    post_button = await self._find_post_button()
+                    if post_button:
+                        clicked = await self._safe_click(post_button, "Post button (force retry)")
+                
+                if not clicked:
+                    await self._take_screenshot("post_click_failed")
+                    return False, "Gagal klik tombol Post"
+                
+                # Tunggu sebentar untuk cek reaksi halaman
+                await self._delay(5, 8)
+                
+                # Handle popup "Continue to post?"
+                popup_handled = await self._handle_continue_to_post_popup()
+                if popup_handled:
+                    logger.info("Handled 'Continue to post?' popup")
+                    await self._delay(3, 5)
+                
+                # Cek apakah muncul error "Something went wrong"
+                await self._delay(3, 5)
+                error_detected = await self._detect_something_went_wrong()
+                
+                if error_detected:
+                    logger.warning(f"'Something went wrong' detected on attempt {post_attempt + 1}")
+                    await self._take_screenshot(f"error_attempt_{post_attempt + 1}")
+                    await self._dismiss_error_toast()
+                    
+                    if post_attempt < max_post_attempts - 1:
+                        # Tunggu sebelum retry - semakin lama tiap retry
+                        wait_time = 15 * (post_attempt + 1)  # 15s, 30s
+                        logger.info(f"Waiting {wait_time}s before retry...")
+                        await self._delay(wait_time, wait_time + 5)
+                        
+                        # Tunggu content checks lagi sebelum retry
+                        logger.info("Re-checking content checks before retry...")
+                        await self._wait_for_content_checks(timeout=60)
+                        await self._delay(3, 5)
+                        await self._simulate_human_behavior()
+                        await self._delay(2, 3)
+                        continue
+                    else:
+                        # Semua attempt gagal
+                        await self._take_screenshot("all_post_attempts_failed")
+                        return False, "Upload gagal: 'Something went wrong' setelah 3x retry. Video mungkin bermasalah."
+                else:
+                    # Tidak ada error → Post berhasil diklik
+                    post_success = True
+                    break
             
             await self._take_screenshot("05_after_post_click", send_telegram=True)
             
