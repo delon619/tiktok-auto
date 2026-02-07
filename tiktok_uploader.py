@@ -961,11 +961,54 @@ class TikTokUploader:
     async def _find_post_button(self):
         """Cari tombol Post - dengan validasi text yang benar"""
         
-        # Pertama, cari dengan selector yang sangat spesifik
+        # Log semua button yang ditemukan untuk debug
+        try:
+            all_btn_debug = await self.page.query_selector_all('button')
+            logger.info(f"Total buttons found on page: {len(all_btn_debug)}")
+            for i, btn in enumerate(all_btn_debug[:20]):
+                try:
+                    text = await btn.text_content()
+                    visible = await btn.is_visible()
+                    disabled = await btn.is_disabled()
+                    box = await btn.bounding_box()
+                    pos = f"x={box['x']:.0f},y={box['y']:.0f}" if box else "no-box"
+                    logger.debug(f"  Button[{i}]: text='{text.strip()[:30] if text else ''}' visible={visible} disabled={disabled} {pos}")
+                except:
+                    pass
+        except:
+            pass
+        
+        # ==== Method 1: Playwright locator - paling reliable ====
+        try:
+            # Exact text match "Post" (bukan "Post now", "Posting", dll)
+            locator = self.page.get_by_role("button", name="Post", exact=True)
+            count = await locator.count()
+            logger.info(f"Locator 'button[name=Post]' found {count} matches")
+            
+            for i in range(count):
+                btn_loc = locator.nth(i)
+                if await btn_loc.is_visible():
+                    text = await btn_loc.text_content()
+                    # Skip jika text mengandung kata lain (Save draft, Discard, dll)
+                    text_stripped = (text or '').strip().lower()
+                    if text_stripped in ['post', 'posting']:
+                        elem = await btn_loc.element_handle()
+                        if elem:
+                            is_disabled = await elem.is_disabled()
+                            if not is_disabled:
+                                logger.info(f"Found Post button via locator: '{text.strip()}'")
+                                return elem
+        except Exception as e:
+            logger.debug(f"Locator method failed: {e}")
+        
+        # ==== Method 2: Specific CSS selectors ====
         specific_selectors = [
             '[data-e2e="post_video_button"]',
             'button[class*="TUXButton--primary"]:has-text("Post")',
+            'button[class*="TUXButton"][class*="primary"]:has-text("Post")',
             'button[class*="primary"]:has-text("Post")',
+            'div[class*="btn-post"] button',
+            'div[class*="ButtonPost"] button',
         ]
         
         for selector in specific_selectors:
@@ -975,18 +1018,18 @@ class TikTokUploader:
                     is_disabled = await btn.is_disabled()
                     if not is_disabled:
                         text = await btn.text_content()
-                        logger.info(f"Found specific Post button: '{text}'")
+                        logger.info(f"Found Post button via selector '{selector}': '{text}'")
                         return btn
+                    else:
+                        logger.info(f"Found Post button via '{selector}' but it's DISABLED")
             except:
                 continue
         
-        # Jika tidak ditemukan, cari semua button dan filter dengan hati-hati
+        # ==== Method 3: Scan all buttons (tanpa filter posisi x) ====
         all_buttons = await self.page.query_selector_all('button')
         
-        # Kata-kata yang harus ada di tombol Post
-        post_keywords = ['post', 'posting', 'publish', 'upload']
         # Kata-kata yang TIDAK boleh ada (harus di-skip)
-        skip_keywords = ['discard', 'cancel', 'batal', 'hapus', 'delete', 'save', 'draft', 'schedule']
+        skip_keywords = ['discard', 'cancel', 'batal', 'hapus', 'delete', 'save', 'draft', 'schedule', 'edit', 'sound', 'text']
         
         candidates = []
         
@@ -995,15 +1038,16 @@ class TikTokUploader:
                 if not await btn.is_visible():
                     continue
                 
-                is_disabled = await btn.is_disabled()
-                if is_disabled:
-                    continue
-                
                 text = await btn.text_content()
                 if not text:
                     continue
                 
                 text_lower = text.strip().lower()
+                
+                # Hanya terima button yang textnya pendek dan mengandung "post"
+                # Skip button dengan text panjang (biasanya bukan tombol Post)
+                if len(text.strip()) > 20:
+                    continue
                 
                 # Skip button yang mengandung kata-kata negatif
                 skip = False
@@ -1011,37 +1055,85 @@ class TikTokUploader:
                     if skip_word in text_lower:
                         skip = True
                         break
-                
                 if skip:
                     continue
                 
-                # Skip sidebar button (Postingan di sidebar)
+                # Skip sidebar navigation items
                 if 'postingan' in text_lower:
                     continue
                 
-                # Cek apakah mengandung kata post keywords
-                has_post_keyword = False
-                for keyword in post_keywords:
-                    if keyword in text_lower:
-                        has_post_keyword = True
-                        break
-                
-                if has_post_keyword:
+                # Cek apakah textnya adalah "Post" atau mengandung "post"
+                if text_lower in ['post', 'posting'] or 'post' in text_lower:
+                    is_disabled = await btn.is_disabled()
                     box = await btn.bounding_box()
-                    if box and box['x'] > 300:  # Harus di area form, bukan sidebar
+                    logger.info(f"Post candidate: '{text.strip()}' disabled={is_disabled} box={box}")
+                    
+                    if not is_disabled:
                         candidates.append((btn, text.strip(), box))
-                        logger.info(f"Post candidate: '{text.strip()}' at x={box['x']}")
             except:
                 continue
         
-        # Pilih candidate terbaik (biasanya yang x-nya paling besar = paling kanan)
         if candidates:
-            # Sort by x position descending (paling kanan)
-            candidates.sort(key=lambda x: x[2]['x'], reverse=True)
+            # Prefer exact "Post" text
+            for c in candidates:
+                if c[1].lower().strip() == 'post':
+                    logger.info(f"Selected exact 'Post' button at box={c[2]}")
+                    return c[0]
+            
+            # Otherwise return first candidate
             best = candidates[0]
-            logger.info(f"Selected Post button: '{best[1]}' at x={best[2]['x']}")
+            logger.info(f"Selected Post button: '{best[1]}' at box={best[2]}")
             return best[0]
         
+        # ==== Method 4: Last resort - cari button merah/pink (primary color) ====
+        try:
+            primary_btn = await self.page.evaluate('''() => {
+                const buttons = document.querySelectorAll('button');
+                for (const btn of buttons) {
+                    const style = window.getComputedStyle(btn);
+                    const bgColor = style.backgroundColor;
+                    const text = btn.textContent.trim().toLowerCase();
+                    // TikTok Post button biasanya merah/pink
+                    if ((bgColor.includes('254') || bgColor.includes('255') || bgColor.includes('fe2c55') || 
+                         bgColor.includes('rgb(254') || bgColor.includes('rgb(255, 59') ||
+                         style.background.includes('fe2c55')) && 
+                        (text === 'post' || text === 'posting')) {
+                        return true;
+                    }
+                }
+                return false;
+            }''')
+            
+            if primary_btn:
+                # Klik via evaluate  
+                result = await self.page.evaluate('''() => {
+                    const buttons = document.querySelectorAll('button');
+                    for (const btn of buttons) {
+                        const text = btn.textContent.trim().toLowerCase();
+                        if (text === 'post' || text === 'posting') {
+                            const rect = btn.getBoundingClientRect();
+                            if (rect.width > 0 && rect.height > 0 && !btn.disabled) {
+                                return {x: rect.x + rect.width/2, y: rect.y + rect.height/2, text: btn.textContent.trim()};
+                            }
+                        }
+                    }
+                    return null;
+                }''')
+                
+                if result:
+                    logger.info(f"Found Post button via JS color detection: '{result['text']}' at ({result['x']}, {result['y']})")
+                    # Return as element handle for clicking
+                    elem = await self.page.query_selector(f'button:has-text("{result["text"]}")')
+                    if elem:
+                        return elem
+                    # Fallback: click by coordinate
+                    logger.info(f"Clicking Post button by coordinates ({result['x']}, {result['y']})")
+                    await self.page.mouse.click(result['x'], result['y'])
+                    return "CLICKED_BY_COORDS"
+        except Exception as e:
+            logger.debug(f"JS color detection failed: {e}")
+        
+        logger.warning("Post button NOT FOUND by any method")
         return None
     
     async def _wait_for_upload_complete(self, timeout: int = 180) -> Tuple[bool, str]:
@@ -1306,36 +1398,105 @@ class TikTokUploader:
                 post_button = await self._find_post_button()
                 
                 if not post_button:
-                    logger.warning("Post button not found, waiting and retrying...")
+                    logger.warning("Post button not found on first try, waiting and retrying...")
                     await self._delay(8, 12)
+                    # Coba scroll ke area Post button
+                    await self.page.evaluate('''() => {
+                        const postArea = document.querySelector('button');
+                        // Scroll smooth ke 80% dari halaman
+                        window.scrollTo({top: document.body.scrollHeight * 0.8, behavior: 'smooth'});
+                    }''')
+                    await self._delay(3, 5)
                     post_button = await self._find_post_button()
                 
                 if not post_button:
-                    # Coba cek apakah button disabled
-                    disabled_btn = await self.page.query_selector('button:has-text("Post")[disabled]')
-                    if disabled_btn:
-                        logger.warning("Post button is disabled, waiting for it to enable...")
-                        # Tunggu sampai button enabled
-                        for _ in range(15):
-                            await asyncio.sleep(3)
-                            post_button = await self._find_post_button()
-                            if post_button:
-                                break
+                    # Coba cek apakah button disabled (non-HTML disabled attribute)
+                    logger.warning("Post button still not found, checking disabled state...")
+                    disabled_check = await self.page.evaluate('''() => {
+                        const buttons = document.querySelectorAll('button');
+                        for (const btn of buttons) {
+                            const text = btn.textContent.trim().toLowerCase();
+                            if (text === 'post' || text === 'posting') {
+                                return {
+                                    found: true, 
+                                    disabled: btn.disabled, 
+                                    ariaDisabled: btn.getAttribute('aria-disabled'),
+                                    className: btn.className,
+                                    text: btn.textContent.trim()
+                                };
+                            }
+                        }
+                        return {found: false};
+                    }''')
+                    logger.info(f"Post button JS check: {disabled_check}")
+                    
+                    if disabled_check and disabled_check.get('found'):
+                        if disabled_check.get('disabled') or disabled_check.get('ariaDisabled') == 'true':
+                            logger.warning("Post button is disabled, waiting for it to enable...")
+                            for _ in range(20):
+                                await asyncio.sleep(3)
+                                post_button = await self._find_post_button()
+                                if post_button:
+                                    break
+                        else:
+                            # Button ditemukan via JS tapi tidak via selector - force click via JS
+                            logger.warning("Post button found by JS but not selector, force clicking...")
+                            js_result = await self.page.evaluate('''() => {
+                                const buttons = document.querySelectorAll('button');
+                                for (const btn of buttons) {
+                                    const text = btn.textContent.trim().toLowerCase();
+                                    if ((text === 'post' || text === 'posting') && !btn.disabled) {
+                                        btn.scrollIntoView({behavior: 'smooth', block: 'center'});
+                                        btn.click();
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }''')
+                            if js_result:
+                                post_button = "CLICKED_BY_COORDS"
+                                logger.info("Post button force-clicked via JS")
                     
                     if not post_button:
-                        await self._take_screenshot("post_button_not_found")
+                        await self._take_screenshot("post_button_not_found", send_telegram=True)
                         return False, "Tombol Post tidak ditemukan"
                 
                 # Klik Post
                 logger.info("Step 9: Clicking Post button...")
                 await self._delay(1, 2)
-                clicked = await self._safe_click(post_button, "Post button")
                 
-                if not clicked:
-                    await self._delay(2, 3)
-                    post_button = await self._find_post_button()
-                    if post_button:
-                        clicked = await self._safe_click(post_button, "Post button (force retry)")
+                # Handle jika _find_post_button sudah klik via koordinat
+                if post_button == "CLICKED_BY_COORDS":
+                    logger.info("Post button already clicked by coordinates")
+                    clicked = True
+                else:
+                    clicked = await self._safe_click(post_button, "Post button")
+                    
+                    if not clicked:
+                        await self._delay(2, 3)
+                        post_button = await self._find_post_button()
+                        if post_button and post_button != "CLICKED_BY_COORDS":
+                            clicked = await self._safe_click(post_button, "Post button (force retry)")
+                        elif post_button == "CLICKED_BY_COORDS":
+                            clicked = True
+                    
+                    # Last resort: klik via JavaScript
+                    if not clicked:
+                        logger.warning("Normal click failed, trying JS click on any Post button...")
+                        js_clicked = await self.page.evaluate('''() => {
+                            const buttons = document.querySelectorAll('button');
+                            for (const btn of buttons) {
+                                const text = btn.textContent.trim().toLowerCase();
+                                if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                    btn.click();
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }''')
+                        if js_clicked:
+                            logger.info("Post button clicked via JS fallback")
+                            clicked = True
                 
                 if not clicked:
                     await self._take_screenshot("post_click_failed")
