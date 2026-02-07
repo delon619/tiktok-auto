@@ -1,130 +1,128 @@
-[0131/210122.971:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210123.163:INFO:CONSOLE:1] ".", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210123.379:INFO:CONSOLE:2] "[DEPRECATED] Default export is deprecated. Instead use `import { create } from 'zustand'`.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
-[0131/210123.383:INFO:CONSOLE:2] "[DEPRECATED] Default export is deprecated. Instead use `import { create } from 'zustand'`.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
-[0131/210123.441:INFO:CONSOLE:2] "[DEPRECATED] Default export is deprecated. Instead use `import { create } from 'zustand'`.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
-[0131/210123.540:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8C01800F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210123.571:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: webapp] appid: 1988, userInfo:{"user_unique_id":"7589632907724490256","user_type":12,"user_id":"7590740098187068434","user_is_login":true,"device_id":"7589632907724490256"}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
-[0131/210123.571:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: webapp] appid: 1988, sdk is ready, version is 5.3.12_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
-[0131/210123.596:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: studio_web] appid: 335386, userInfo:{"user_unique_id":"7590740098187068434","web_id":"7592288020440303112"}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
-[0131/210123.596:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: studio_web] appid: 335386, sdk is ready, version is 5.3.12_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
-[0131/210123.710:INFO:CONSOLE:134] "[useSWAPIResultSync] start listen: L2S_PROJECT_LIST", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/main.cdd82326.js (134)
-[0131/210123.712:INFO:CONSOLE:134] "[useSWAPIResultSync] start listen: L2S_ICON_INFO", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/main.cdd82326.js (134)
-[0131/210123.799:INFO:CONSOLE:1] "web upload is under Vmok mode", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
-[0131/210123.950:INFO:CONSOLE:1] "[object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
-[0131/210123.951:INFO:CONSOLE:2] "config must be use after function init", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210124.057:INFO:CONSOLE:2] "%c %s color: yellow; background-color: black; [instance: clip-forge-tea-collector] appid: 906553, userInfo:{"user_unique_id":"7592288010768172551","web_id":"7592288010768172551"}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210124.059:INFO:CONSOLE:2] "%c %s color: yellow; background-color: black; [instance: clip-forge-tea-collector] appid: 906553, sdk is ready, version is 5.3.14_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210124.061:INFO:CONSOLE:2] "ttap_vmok_load @pgc-web/web-creation [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
-[0131/210124.092:INFO:CONSOLE:0] "Access to XMLHttpRequest at 'https://mcs-sg.tiktokv.com/list' from origin 'https://www.tiktok.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.174:INFO:CONSOLE:0] "Access to XMLHttpRequest at 'https://mcs-sg.tiktokv.com/list' from origin 'https://www.tiktok.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.174:INFO:CONSOLE:2] "ttap_vmok_load @pgc-web/web-creation [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210124.243:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.272:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.367:INFO:CONSOLE:1] "[object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.472:ERROR:content\public\browser\web_contents_delegate.cc:300] WebContentsDelegate::CheckMediaAccessPermission: Not supported.
-[0131/210124.472:ERROR:content\public\browser\web_contents_delegate.cc:300] WebContentsDelegate::CheckMediaAccessPermission: Not supported.
-[0131/210124.480:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
-[0131/210124.489:INFO:CONSOLE:1] "spooky", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
-[0131/210124.500:INFO:CONSOLE:1] "[ZTI] ready to init ZTI SDK", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.505:INFO:CONSOLE:1] "load long to short clip data undefined", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
-[0131/210124.512:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: web_creation] appid: 1988, userInfo:{"user_unique_id":"7589632907724490256","user_id":"7590740098187068434","user_is_login":true}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
-[0131/210124.512:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: web_creation] appid: 1988, sdk is ready, version is 5.3.12_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
-[0131/210124.534:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.535:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.535:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.535:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.536:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.537:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8C01800F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.569:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.577:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.577:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.602:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.604:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.617:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.618:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.631:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.631:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.647:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.647:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.661:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.661:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.673:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.812:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.814:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.814:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.846:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.849:INFO:CONSOLE:1] "sdk uid exp hit", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
-[0131/210124.850:INFO:CONSOLE:1] "[ZTI] enableZTI: true", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.867:INFO:CONSOLE:1] "[ZTI]: sg", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.877:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.877:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.899:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.900:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.912:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.912:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210124.925:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.925:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.926:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.926:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.982:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.983:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.983:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210124.983:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.006:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.010:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.029:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.031:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.044:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.045:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.057:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.057:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.086:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.278:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.278:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.279:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8201900F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.312:INFO:CONSOLE:1] "startSelectRoute", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
-[0131/210125.313:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8501900F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.469:INFO:CONSOLE:1] ".", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210125.487:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.487:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.487:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.489:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.489:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.514:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.618:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210125.619:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210125.632:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210125.633:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210125.723:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.723:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.762:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.804:INFO:CONSOLE:1] "[ZTI] ready to init ZTI SDK", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.805:INFO:CONSOLE:1] "[ZTI] enableZTI: true", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.808:INFO:CONSOLE:1] "[ZTI]: sg", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210125.822:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.822:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.823:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210125.855:INFO:CONSOLE:1] "mobilecv2: 1.8.27", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210125.857:INFO:CONSOLE:1] "V   bytenn espresso version: 3.10.30
+[0207/215046.026:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.092:INFO:CONSOLE:1] ".", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215046.132:INFO:CONSOLE:2] "[DEPRECATED] Default export is deprecated. Instead use `import { create } from 'zustand'`.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
+[0207/215046.134:INFO:CONSOLE:2] "[DEPRECATED] Default export is deprecated. Instead use `import { create } from 'zustand'`.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
+[0207/215046.176:INFO:CONSOLE:2] "[DEPRECATED] Default export is deprecated. Instead use `import { create } from 'zustand'`.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
+[0207/215046.240:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8C0180034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.296:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: studio_web] appid: 335386, userInfo:{"user_unique_id":"7590740098187068434","web_id":"7592288020440303112"}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
+[0207/215046.297:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: studio_web] appid: 335386, sdk is ready, version is 5.3.12_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
+[0207/215046.298:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: webapp] appid: 1988, userInfo:{"user_unique_id":"7589632907724490256","user_type":12,"user_id":"7590740098187068434","user_is_login":true,"device_id":"7589632907724490256"}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
+[0207/215046.298:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: webapp] appid: 1988, sdk is ready, version is 5.3.12_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
+[0207/215046.353:INFO:CONSOLE:134] "[useSWAPIResultSync] start listen: L2S_PROJECT_LIST", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/main.cdd82326.js (134)
+[0207/215046.353:INFO:CONSOLE:134] "[useSWAPIResultSync] start listen: L2S_ICON_INFO", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/main.cdd82326.js (134)
+[0207/215046.415:INFO:CONSOLE:1] "web upload is under Vmok mode", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
+[0207/215046.523:INFO:CONSOLE:1] "[object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
+[0207/215046.524:INFO:CONSOLE:2] "config must be use after function init", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
+[0207/215046.602:INFO:CONSOLE:2] "%c %s color: yellow; background-color: black; [instance: clip-forge-tea-collector] appid: 906553, userInfo:{"user_unique_id":"7592288010768172551","web_id":"7592288010768172551"}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
+[0207/215046.603:INFO:CONSOLE:2] "%c %s color: yellow; background-color: black; [instance: clip-forge-tea-collector] appid: 906553, sdk is ready, version is 5.3.14_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
+[0207/215046.605:INFO:CONSOLE:2] "ttap_vmok_load @pgc-web/web-creation [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
+[0207/215046.673:INFO:CONSOLE:2] "ttap_vmok_load @pgc-web/web-creation [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
+[0207/215046.758:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.792:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.793:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.794:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.794:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.855:INFO:CONSOLE:1] "[object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215046.893:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.893:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.894:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.925:ERROR:content\public\browser\web_contents_delegate.cc:300] WebContentsDelegate::CheckMediaAccessPermission: Not supported.
+[0207/215046.925:ERROR:content\public\browser\web_contents_delegate.cc:300] WebContentsDelegate::CheckMediaAccessPermission: Not supported.
+[0207/215046.929:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
+[0207/215046.933:INFO:CONSOLE:1] "spooky", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
+[0207/215046.947:INFO:CONSOLE:1] "[ZTI] ready to init ZTI SDK", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215046.951:INFO:CONSOLE:1] "load long to short clip data undefined", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
+[0207/215046.956:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: web_creation] appid: 1988, userInfo:{"user_unique_id":"7589632907724490256","user_id":"7590740098187068434","user_is_login":true}", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
+[0207/215046.957:INFO:CONSOLE:1] "%c %s color: yellow; background-color: black; [instance: web_creation] appid: 1988, sdk is ready, version is 5.3.12_oversea, you can report now !!!", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/log-sdk/collect/5.2/oversea/collect.js (1)
+[0207/215046.964:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.964:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.964:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.964:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.964:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.964:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.970:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8C0180034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.990:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215046.990:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.010:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.012:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.021:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.022:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.034:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.034:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.043:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.043:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.051:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.052:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.064:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.065:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.065:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.065:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.108:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.108:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.108:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.108:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.124:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.124:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.141:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.141:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.149:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.149:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.219:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.219:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.219:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.255:INFO:CONSOLE:1] "sdk uid exp hit", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/UploadPage.d1d12492.js (1)
+[0207/215047.256:INFO:CONSOLE:1] "[ZTI] enableZTI: true", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.269:INFO:CONSOLE:1] "[ZTI]: sg", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.312:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.312:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.312:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.331:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.332:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.347:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.347:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.361:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.362:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.390:INFO:CONSOLE:1] "startSelectRoute", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
+[0207/215047.395:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.395:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.405:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A820190034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.437:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.437:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.437:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.452:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.602:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A850190034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.630:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.630:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.630:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.630:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215047.668:INFO:CONSOLE:1] "mobilecv2: 1.8.27", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215047.670:INFO:CONSOLE:1] "V   bytenn espresso version: 3.10.30
 ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210125.860:INFO:CONSOLE:1] "[I:EffectWebSDK] ## 2026-01-31 20:01:25.860 [threadid:3142804,effect_wasm_api.cpp,1330] INFO ## [EffectWebSDK]SetLogLevel 8", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210126.178:INFO:CONSOLE:1] "Error", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210126.949:INFO:CONSOLE:1] "completeSelectRoute:  [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
-[0131/210127.542:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210127.543:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210127.559:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210127.559:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210127.679:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8002C00F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210127.940:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8302C00F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210127.956:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210127.956:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210127.980:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210127.980:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210128.020:INFO:CONSOLE:1] "[IMPORTANT NOTICE] There are more than 2 WEBMSSDKs integrated in this page, please check the issue carefully!! ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210133.490:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(selectVideoFiles,selectVideoFiles-start,selectVideoFiles-end) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
-[0131/210133.841:INFO:CONSOLE:1] "[video meta] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
-[0131/210133.846:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215047.672:INFO:CONSOLE:1] "[I:EffectWebSDK] ## 2026-02-07 20:50:47.672 [threadid:3142804,effect_wasm_api.cpp,1330] INFO ## [EffectWebSDK]SetLogLevel 8", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215047.718:INFO:CONSOLE:1] ".", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215047.876:INFO:CONSOLE:1] "Error", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215047.978:INFO:CONSOLE:1] "[ZTI] ready to init ZTI SDK", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.978:INFO:CONSOLE:1] "[ZTI] enableZTI: true", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215047.981:INFO:CONSOLE:1] "[ZTI]: sg", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215048.022:INFO:CONSOLE:1] "completeSelectRoute:  [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
+[0207/215048.191:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215048.191:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215048.203:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215048.204:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215049.744:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215049.745:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215049.759:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215049.759:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215049.850:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A820190034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215049.870:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A850190034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215049.889:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215049.890:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215049.925:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215049.925:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215049.970:INFO:CONSOLE:1] "[IMPORTANT NOTICE] There are more than 2 WEBMSSDKs integrated in this page, please check the issue carefully!! ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215058.538:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(selectVideoFiles,selectVideoFiles-start,selectVideoFiles-end) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
+[0207/215058.649:INFO:CONSOLE:1] "[video meta] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
+[0207/215058.654:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -135,7 +133,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.847:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.654:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -146,7 +144,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.847:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.655:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -157,7 +155,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.847:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.655:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -168,7 +166,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.847:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.655:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at i.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -179,7 +177,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.847:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.657:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at i.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -190,7 +188,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.847:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.657:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -201,7 +199,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.850:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.657:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -212,7 +210,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.850:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.657:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Gt.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -223,7 +221,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.850:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.657:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Gt.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -234,7 +232,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.850:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.658:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -245,7 +243,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.850:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.658:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -256,7 +254,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.850:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.658:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -267,7 +265,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.851:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.658:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -278,7 +276,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.851:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.658:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at o.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -289,7 +287,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.852:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.659:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at o.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -300,7 +298,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.852:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.659:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -311,7 +309,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.852:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.659:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -322,7 +320,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.853:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.659:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -333,7 +331,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.853:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.660:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -344,7 +342,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.854:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.660:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -355,7 +353,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.854:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.660:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -366,7 +364,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.854:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.660:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -377,7 +375,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.854:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.661:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -388,7 +386,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.855:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.661:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at qn.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -399,7 +397,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.855:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.661:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at qn.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -410,7 +408,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.855:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.661:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -421,7 +419,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.856:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.661:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -432,7 +430,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.856:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.661:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -443,7 +441,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.856:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.662:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -454,7 +452,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.856:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.662:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Gt.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -465,7 +463,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.856:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.662:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Gt.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -476,7 +474,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.857:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.662:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -487,7 +485,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.857:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.663:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -498,7 +496,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.857:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.663:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -509,7 +507,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.857:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.663:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -520,7 +518,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.857:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.663:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -531,7 +529,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.859:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.663:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -542,7 +540,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.859:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.664:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -553,7 +551,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.860:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.664:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -564,7 +562,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.860:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.664:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -575,7 +573,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.860:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.664:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -586,7 +584,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.860:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.665:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -597,7 +595,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.860:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.665:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -608,7 +606,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.861:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.665:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -619,7 +617,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.861:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.665:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at r.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -630,7 +628,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.861:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.666:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -641,7 +639,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.863:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.666:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -652,7 +650,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.863:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.666:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Gt.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -663,7 +661,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.863:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.666:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Gt.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -674,7 +672,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.863:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.666:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -685,7 +683,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.863:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.667:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at Xe.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -696,7 +694,7 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.863:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.667:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:105907)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:121186)
@@ -707,7 +705,7 @@
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210133.865:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
+[0207/215058.667:INFO:CONSOLE:2] "iterable.length has been deprecated, use iterable.size or iterable.count(). This warning will become a silent error in a future version. Error
     at St.get (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js:2:101781)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:18336)
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:112510)
@@ -718,69 +716,65 @@
     at https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142881
     at t.exports (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:110511)
     at t (https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/lib-lodash.f1602688.js:2:142839)", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210134.146:INFO:CONSOLE:1] "[video meta] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
-[0131/210134.273:INFO:CONSOLE:1] "[video meta] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
-[0131/210134.451:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.452:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.485:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.487:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.522:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.523:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.553:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.555:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.591:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.592:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.654:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.657:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.690:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.693:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.725:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.728:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.742:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(file_1769864493509_129490-VIDEO_READY~file_1769864493509_129490-VIDEO_EDIT_READY,file_1769864493509_129490-VIDEO_READY,file_1769864493509_129490-VIDEO_EDIT_READY) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
-[0131/210134.764:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.766:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.794:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.795:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.837:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.840:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.876:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210134.877:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
-[0131/210135.107:INFO:CONSOLE:1] "[EffectWasmBind][create_context_from_offscreen_canvas] handle (number): 10 typeof: number Emval? object", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210135.107:INFO:CONSOLE:1] "[EffectWasmBind][create_context_from_offscreen_canvas] obj: [object OffscreenCanvas] ctor: OffscreenCanvas isOSC: true size: 800 x 800", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210135.142:INFO:CONSOLE:1] "[EffectWasmBind][create_context_from_offscreen_canvas] GL.createContext -> 3954080", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210135.144:INFO:CONSOLE:1] "[I:EffectSDK-1980] [bef_info_sticker_api.cpp 2264] bef_info_sticker_director_create start.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210135.144:INFO:CONSOLE:1] "[I:EffectSDK-1980] [InfoStickerDirector.cpp 925] InfoSticker: useAmazing: 1.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210135.182:INFO:CONSOLE:1] "[I:EffectSDK-1980] [bef_info_sticker_api.cpp 2280] bef_info_sticker_director_create success: pointer: 0x35ccd0", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
-[0131/210135.256:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8C01800F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210135.272:INFO:CONSOLE:2] "WebCodecs probe failed: MediaCapabilities.decodingInfo returns: [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210135.272:INFO:CONSOLE:2] "VideoRenderer WebcodecMediaPlayer init failed, try to use CompatibleMediaPlayer Error: WebCodecs probe check failed", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210135.348:INFO:CONSOLE:1] "preUpload:  [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
-[0131/210135.576:INFO:CONSOLE:2] "??? VideoRenderer init MediaPlayer use compatible", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
-[0131/210135.703:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210135.815:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(file_1769864493509_129490-VIDEO_READY~file_1769864493509_129490-VIDEO_COVER_PREVIEW_READY,file_1769864493509_129490-VIDEO_READY,file_1769864493509_129490-VIDEO_COVER_PREVIEW_READY) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
-[0131/210135.870:INFO:CONSOLE:1] "get long to short file params timeout", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/Form.826f8948.js (1)
-[0131/210137.454:INFO:CONSOLE:2] "file_1769864495783_551729 is not exit in object tasks", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2053.59fc1d4c.js (2)
-[0131/210137.986:INFO:CONSOLE:0] "Access to XMLHttpRequest at 'https://mcs-sg.tiktokv.com/v1/list' from origin 'https://www.tiktok.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210137.996:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(save_edit_cover~save_edit_cover_finish,save_edit_cover,save_edit_cover_finish) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
-[0131/210137.998:INFO:CONSOLE:2] "file_1769864496105_53480 is not exit in object tasks", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2053.59fc1d4c.js (2)
-[0131/210138.165:INFO:CONSOLE:0] "Access to XMLHttpRequest at 'https://mcs-sg.tiktokv.com/v1/list' from origin 'https://www.tiktok.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210138.167:INFO:CONSOLE:0] "Access to XMLHttpRequest at 'https://mcs-sg.tiktokv.com/v1/list' from origin 'https://www.tiktok.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210138.243:INFO:CONSOLE:1] "complete [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
-[0131/210159.522:INFO:CONSOLE:1] "The output of stringifiedVEDraft is  ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/Form.826f8948.js (1)
-[0131/210159.524:INFO:CONSOLE:1] "🦺🦺🦺🦺🦺 postProject formParams:  [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/Form.826f8948.js (1)
-[0131/210200.145:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8201900F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210200.147:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8501900F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
-[0131/210201.579:INFO:CONSOLE:2] "[ttastra-runtime][warning]: importing getVGeo from '@ttastra/core/runtime' is deprecated, please update import path to '@ttastra/core/regions'. for example: import { getVGeo } from '@ttastra/core/runtime/regions';
+[0207/215058.786:INFO:CONSOLE:1] "[video meta] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
+[0207/215058.902:INFO:CONSOLE:1] "[video meta] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4057.f7b8359c.js (1)
+[0207/215059.041:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.042:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.071:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.073:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.104:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.106:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.135:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.137:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.170:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.173:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.224:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.228:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.259:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.261:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.287:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.288:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.301:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(file_1770472258552_848176-VIDEO_READY~file_1770472258552_848176-VIDEO_EDIT_READY,file_1770472258552_848176-VIDEO_READY,file_1770472258552_848176-VIDEO_EDIT_READY) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
+[0207/215059.320:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.321:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.350:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.351:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.391:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.393:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.426:INFO:CONSOLE:1] "[enableDescriptionReform] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.427:INFO:CONSOLE:1] "[enableLongToShort] [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2649.ec228e29.js (1)
+[0207/215059.645:INFO:CONSOLE:1] "[EffectWasmBind][create_context_from_offscreen_canvas] handle (number): 10 typeof: number Emval? object", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215059.645:INFO:CONSOLE:1] "[EffectWasmBind][create_context_from_offscreen_canvas] obj: [object OffscreenCanvas] ctor: OffscreenCanvas isOSC: true size: 800 x 800", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215059.676:INFO:CONSOLE:1] "[EffectWasmBind][create_context_from_offscreen_canvas] GL.createContext -> 3954080", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215059.679:INFO:CONSOLE:1] "[I:EffectSDK-1980] [bef_info_sticker_api.cpp 2264] bef_info_sticker_director_create start.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215059.679:INFO:CONSOLE:1] "[I:EffectSDK-1980] [InfoStickerDirector.cpp 925] InfoSticker: useAmazing: 1.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215059.711:INFO:CONSOLE:1] "[I:EffectSDK-1980] [bef_info_sticker_api.cpp 2280] bef_info_sticker_director_create success: pointer: 0x35ccd0", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/worker/effect_c.ec91bb5f.js (1)
+[0207/215059.778:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A820190034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215059.793:INFO:CONSOLE:2] "WebCodecs probe failed: MediaCapabilities.decodingInfo returns: [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
+[0207/215059.793:INFO:CONSOLE:2] "VideoRenderer WebcodecMediaPlayer init failed, try to use CompatibleMediaPlayer Error: WebCodecs probe check failed", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
+[0207/215059.850:INFO:CONSOLE:1] "preUpload:  [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
+[0207/215059.870:INFO:CONSOLE:2] "??? VideoRenderer init MediaPlayer use compatible", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/4494.296343f3.js (2)
+[0207/215100.073:INFO:CONSOLE:0] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215100.299:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(file_1770472258552_848176-VIDEO_READY~file_1770472258552_848176-VIDEO_COVER_PREVIEW_READY,file_1770472258552_848176-VIDEO_READY,file_1770472258552_848176-VIDEO_COVER_PREVIEW_READY) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
+[0207/215100.420:INFO:CONSOLE:1] "get long to short file params timeout", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/Form.826f8948.js (1)
+[0207/215101.239:INFO:CONSOLE:1] "[performance] an error occurred when calling measure(save_edit_cover~save_edit_cover_finish,save_edit_cover,save_edit_cover_finish) [object DOMException]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/__federation_expose_routes.a214bfb7.js (1)
+[0207/215101.240:INFO:CONSOLE:2] "file_1770472260509_628365 is not exit in object tasks", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2053.59fc1d4c.js (2)
+[0207/215102.528:INFO:CONSOLE:1] "complete [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/9047.60c56bfd.js (1)
+[0207/215102.735:INFO:CONSOLE:2] "file_1770472262168_708108 is not exit in object tasks", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/2053.59fc1d4c.js (2)
+[0207/215239.676:INFO:CONSOLE:1] "The output of stringifiedVEDraft is  ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/Form.826f8948.js (1)
+[0207/215239.677:INFO:CONSOLE:1] "🦺🦺🦺🦺🦺 postProject formParams:  [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator_center/static/js/async/Form.826f8948.js (1)
+[0207/215240.313:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8C0180034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215240.315:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A850190034660000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/upload (0)
+[0207/215241.202:INFO:CONSOLE:2] "[ttastra-runtime][warning]: importing getVGeo from '@ttastra/core/runtime' is deprecated, please update import path to '@ttastra/core/regions'. for example: import { getVGeo } from '@ttastra/core/runtime/regions';
 ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
-[0131/210201.640:INFO:CONSOLE:2] "ttap_vmok_load @pgc-web/micro-fe [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
-[0131/210201.644:INFO:CONSOLE:0] "[GroupMarkerNotSet(crbug.com/242999)!:A8002C00F4700000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content.", source: https://www.tiktok.com/tiktokstudio/content (0)
-[0131/210201.751:INFO:CONSOLE:1] "Error", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210203.717:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210203.719:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210203.735:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210203.736:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
-[0131/210203.765:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210203.767:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210203.791:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210203.793:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
-[0131/210203.910:INFO:CONSOLE:1] "[IMPORTANT NOTICE] There are more than 2 WEBMSSDKs integrated in this page, please check the issue carefully!! ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2407/webmssdk_ex.js (1)
+[0207/215241.237:INFO:CONSOLE:2] "ttap_vmok_load @pgc-web/micro-fe [object Object]", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ies/creator-center-web/static/js/3749.1ae65256.js (2)
+[0207/215241.326:INFO:CONSOLE:1] "Error", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215243.274:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215243.274:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215243.289:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215243.290:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/webmssdk/1.0.0.290/webmssdk.js (1)
+[0207/215243.328:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215243.329:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215243.354:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215243.355:INFO:CONSOLE:1] "The Content Security Policy directive 'upgrade-insecure-requests' is ignored when delivered in a report-only policy.", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)
+[0207/215243.400:INFO:CONSOLE:1] "[IMPORTANT NOTICE] There are more than 2 WEBMSSDKs integrated in this page, please check the issue carefully!! ", source: https://sf16-website-login.neutral.ttwstatic.com/obj/tiktok_web_login_static/ttweb_webmssdk_ex/1.0.0.2416/webmssdk_ex.js (1)

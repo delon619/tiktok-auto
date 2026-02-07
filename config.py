@@ -32,7 +32,7 @@ POSTING_SCHEDULE = [
 ]
 
 # Retry
-MAX_RETRY = int(os.getenv("MAX_RETRY", "1"))
+MAX_RETRY = int(os.getenv("MAX_RETRY", "3"))
 
 # Headless
 HEADLESS_UPLOAD = os.getenv("HEADLESS_UPLOAD", "true").lower() == "true"

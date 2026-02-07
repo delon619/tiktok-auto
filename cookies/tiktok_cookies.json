@@ -10,12 +10,12 @@
   },
   {
     "name": "msToken",
-    "value": "8xIA_arwtUsdR4Iba9vk3xpsVW5py9IGqTI38zEoQyNq6pswFvJ9tB-RBp1Bh_GjXbiBRwvObAczzOsm1BMGlc13_tB8Ay7lKYzh9pxWl7wyTjQsDjVv9S7P0pK5IaWagY0L5LRd2uQaDQ==",
+    "value": "cGVX9GHsXVyzSvK1_T8n3ip4m7q0X40b1t5HQ7fUQj1IjHFOyEL36GyCW2hjQgdIyUE15tl0RNRcr8r_j_GtlXjX-wOjPp0AU5uWZe-c7SSozLRgnP-TEbyscoIR9K2byny5UusiPj85RQ==",
     "domain": ".tiktok.com",
     "path": "/",
     "secure": true,
     "httpOnly": false,
-    "expires": 1768576966.449232
+    "expires": 1771335605.880975
   },
   {
     "name": "tt_session_tlb_tag",
@@ -37,21 +37,21 @@
   },
   {
     "name": "ttwid",
-    "value": "1%7CBQ8YJxHlBE_6yKSRx601NV1xGWeXP6yW4eQdfK8Gngw%7C1767712876%7C1ab015f8a6d238c7d2e2fe0979e1c27ebcadf788ba39c017e385f2477f81b31e",
+    "value": "1%7CBQ8YJxHlBE_6yKSRx601NV1xGWeXP6yW4eQdfK8Gngw%7C1770471601%7C14f2b59229b979cb9731644996419a4c0de9d4b3642d0cb3551f35d9eb9dd43d",
     "domain": ".tiktok.com",
     "path": "/",
     "secure": true,
     "httpOnly": true,
-    "expires": 1799248876.494888
+    "expires": 1802007600.174522
   },
   {
     "name": "perf_feed_cache",
-    "value": "{%22expireTimestamp%22:1767884400000%2C%22itemIds%22:[%227580399484996193543%22%2C%227573952745086979335%22%2C%227561775744150555925%22]}",
+    "value": "{%22expireTimestamp%22:1770642000000%2C%22itemIds%22:[%227587025711538556180%22%2C%227587310519812459797%22%2C%227573061792704761106%22]}",
     "domain": ".www.tiktok.com",
     "path": "/",
     "secure": true,
     "httpOnly": false,
-    "expires": 1768317679
+    "expires": 1771076400
   },
   {
     "name": "uid_tt",
@@ -72,14 +72,6 @@
     "expires": 1772283133.056316
   },
   {
-    "name": "s_v_web_id",
-    "value": "verify_mk2qji72_zw61PvT1_r4px_4FDX_A56A_afky73xPJe8s",
-    "domain": ".tiktok.com",
-    "path": "/",
-    "secure": true,
-    "httpOnly": false
-  },
-  {
     "name": "ssid_ucp_v1",
     "value": "1.0.1-KGZlZGVhY2Q0YzY2MDc0MTczNzBlOGM5MTYyNmFjZTkwNGI3ZWRkYzIKIQiSiIT27bzuq2kQ5tD0ygYYswsgDDCA9N7KBjgIQBJIBBADGgJteSIgZGQyNDdlMzJlZmJmNzhhN2JiNjYyNzYxMmRlMGQ0ZGQyTgog7sPXkBOoceWcJ0PZtbW2YQ_u_9rTdPSVjWSMyfB3uAoSIPoDUIQ2yd2rj016Z96hoStTMpP6eIXn1raR4vM9U6tZGAMiBnRpa3Rvaw",
     "domain": ".tiktok.com",
@@ -95,7 +87,7 @@
     "path": "/",
     "secure": true,
     "httpOnly": false,
-    "expires": 1793632874
+    "expires": 1796391595
   },
   {
     "name": "_ttp",
@@ -104,7 +96,7 @@
     "path": "/",
     "secure": true,
     "httpOnly": false,
-    "expires": 1800803874.124417
+    "expires": 1803532000.33281
   },
   {
     "name": "cmpl_token",
@@ -123,15 +115,6 @@
     "secure": true,
     "httpOnly": true,
     "expires": 1772896870.785486
-  },
-  {
-    "name": "passport_auth_status_ss",
-    "value": "8a7b2ee1b560b3fd64c70708795c0690%2Cc9b26de7a804cce9b9a569360ce4408c",
-    "domain": ".tiktok.com",
-    "path": "/",
-    "secure": true,
-    "httpOnly": true,
-    "expires": 1770304870.785786
   },
   {
     "name": "passport_csrf_token",
@@ -185,7 +168,7 @@
     "path": "/",
     "secure": true,
     "httpOnly": false,
-    "expires": 1793632874
+    "expires": 1796391595
   },
   {
     "name": "tt_chain_token",
@@ -194,11 +177,11 @@
     "path": "/",
     "secure": true,
     "httpOnly": true,
-    "expires": 1783264874.475172
+    "expires": 1786023594.632953
   },
   {
     "name": "tt_csrf_token",
-    "value": "nZbVkEvc-BgzFKRTGjYITKNgY_zaRPPsatcc",
+    "value": "AqHV3w5h-QP0PhT2I8Y0XCwVcqNLEo9m7Rc0",
     "domain": ".tiktok.com",
     "path": "/",
     "secure": true,

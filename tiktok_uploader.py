@@ -199,6 +199,21 @@ class TikTokUploader:
         
         BROWSER_PROFILE_DIR.mkdir(parents=True, exist_ok=True)
         
+        # Bersihkan lock file jika browser sebelumnya crash
+        lock_files = [
+            BROWSER_PROFILE_DIR / "Default" / "LOCK",
+            BROWSER_PROFILE_DIR / "SingletonLock",
+            BROWSER_PROFILE_DIR / "SingletonSocket",
+            BROWSER_PROFILE_DIR / "SingletonCookie",
+        ]
+        for lock_file in lock_files:
+            try:
+                if lock_file.exists():
+                    lock_file.unlink()
+                    logger.debug(f"Removed stale lock: {lock_file}")
+            except Exception as e:
+                logger.debug(f"Could not remove lock {lock_file}: {e}")
+        
         # Random viewport
         viewport_width = random.randint(1280, 1400)
         viewport_height = random.randint(750, 850)
@@ -271,20 +286,17 @@ class TikTokUploader:
     async def _close_browser(self):
         """Tutup browser dengan aman"""
         try:
-            if self.page:
-                await self.page.close()
-        except:
-            pass
-        try:
+            # Jangan close page terpisah pada persistent context
+            # karena bisa menyebabkan race condition
             if self.context:
                 await self.context.close()
-        except:
-            pass
+        except Exception as e:
+            logger.debug(f"Error closing context: {e}")
         try:
             if self._playwright:
                 await self._playwright.stop()
-        except:
-            pass
+        except Exception as e:
+            logger.debug(f"Error stopping playwright: {e}")
         
         self.page = None
         self.context = None
@@ -302,8 +314,17 @@ class TikTokUploader:
         for url in upload_urls:
             try:
                 logger.info(f"Trying: {url}")
-                await self.page.goto(url, wait_until="domcontentloaded", timeout=45000)
-                await self._delay(5, 8)
+                
+                # Navigate dan tunggu sampai halaman stabil
+                response = await self.page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                await self._delay(3, 5)
+                
+                # Tunggu sampai tidak ada redirect lagi
+                for _ in range(3):
+                    old_url = self.page.url
+                    await asyncio.sleep(2)
+                    if self.page.url == old_url:
+                        break
                 
                 current_url = self.page.url
                 logger.info(f"Current URL: {current_url}")
@@ -312,13 +333,42 @@ class TikTokUploader:
                 if "login" in current_url.lower():
                     logger.warning("Redirected to login page - session may be expired")
                     await self._take_screenshot("login_redirect")
-                    continue
+                    
+                    # Coba refresh cookies dan retry URL ini sekali
+                    try:
+                        cookies = await self._load_cookies()
+                        await self.context.add_cookies(cookies)
+                        logger.info("Re-loaded cookies, retrying...")
+                        await self.page.goto(url, wait_until="domcontentloaded", timeout=45000)
+                        await self._delay(5, 8)
+                        
+                        if "login" not in self.page.url.lower():
+                            current_url = self.page.url
+                            logger.info(f"Cookie refresh worked! URL: {current_url}")
+                        else:
+                            continue
+                    except:
+                        continue
+                
+                # Tutup popup yang mungkin muncul
+                await self._close_popups()
+                await self._delay(1, 2)
                 
                 # Cek apakah ada form upload
                 has_upload = await self._check_upload_page()
                 if has_upload:
                     logger.info(f"Upload page found at: {url}")
                     return True
+                
+                # Jika URL mengandung upload/studio tapi belum detect form, 
+                # tunggu lebih lama karena halaman mungkin masih loading
+                if any(x in current_url.lower() for x in ['upload', 'studio']):
+                    logger.info("URL looks correct, waiting longer for page to load...")
+                    await self._delay(5, 8)
+                    has_upload = await self._check_upload_page()
+                    if has_upload:
+                        logger.info(f"Upload page found after extra wait at: {current_url}")
+                        return True
                     
             except Exception as e:
                 logger.warning(f"Failed to load {url}: {e}")
@@ -389,39 +439,86 @@ class TikTokUploader:
             # Cek error messages
             error_check = await self._check_for_errors()
             if error_check:
-                return False, error_check
+                # Ignore transient errors di awal upload
+                elapsed_err = int(asyncio.get_event_loop().time() - start_time)
+                if elapsed_err > 30:
+                    return False, error_check
+                else:
+                    logger.debug(f"Ignoring early error: {error_check}")
             
-            # Cek apakah video sudah siap (ada preview atau caption editor)
-            ready_indicators = [
-                # Video preview
-                'video',
-                '[class*="video-preview"]',
-                '[class*="VideoPreview"]',
-                # Caption editor
+            # Cek apakah video sudah siap - gunakan kombinasi indikator
+            # Caption editor (contenteditable) + Post button = paling reliable
+            caption_editor_found = False
+            post_button_found = False
+            
+            # Cek caption editor
+            caption_selectors = [
                 '[contenteditable="true"]',
-                '[class*="caption"]',
-                '[class*="Caption"]',
                 '[class*="DraftEditor"]',
-                # Post button aktif
-                'button:has-text("Post"):not([disabled])',
-                'button:has-text("Posting"):not([disabled])',
+                '[data-contents="true"]',
+                '.public-DraftEditor-content',
+                'div[class*="notranslate"][contenteditable="true"]',
             ]
-            
-            for selector in ready_indicators:
+            for selector in caption_selectors:
                 try:
                     elem = await self.page.query_selector(selector)
                     if elem and await elem.is_visible():
-                        logger.info(f"Video ready indicator found: {selector}")
+                        caption_editor_found = True
+                        break
+                except:
+                    continue
+            
+            # Cek post button
+            post_selectors = [
+                'button:has-text("Post"):not([disabled])',
+                'button:has-text("Posting"):not([disabled])',
+                '[data-e2e="post_video_button"]',
+            ]
+            for selector in post_selectors:
+                try:
+                    elem = await self.page.query_selector(selector)
+                    if elem and await elem.is_visible():
+                        post_button_found = True
+                        break
+                except:
+                    continue
+            
+            # Video ready jika caption editor OR post button ditemukan
+            if caption_editor_found:
+                logger.info("Video ready: caption editor found")
+                return True, "Video ready"
+            
+            if post_button_found:
+                logger.info("Video ready: Post button found")
+                return True, "Video ready"
+            
+            # Cek juga video preview yang lebih spesifik
+            preview_selectors = [
+                'video[src*="blob:"]',
+                'video[src*="tiktok"]',
+                '[class*="video-preview"] video',
+                '[class*="VideoPreview"] video',
+                '[class*="upload"] video[src]',
+            ]
+            for selector in preview_selectors:
+                try:
+                    elem = await self.page.query_selector(selector)
+                    if elem and await elem.is_visible():
+                        logger.info(f"Video preview found: {selector}")
+                        # Tunggu 3 detik lagi agar caption editor juga muncul
+                        await asyncio.sleep(3)
                         return True, "Video ready"
                 except:
                     continue
             
             elapsed = int(asyncio.get_event_loop().time() - start_time)
-            if elapsed % 15 == 0:
+            if elapsed % 15 == 0 and elapsed > 0:
                 logger.info(f"Still processing... ({elapsed}s)")
+                await self._take_screenshot(f"processing_{elapsed}s", send_telegram=False)
             
             await asyncio.sleep(2)
         
+        await self._take_screenshot("video_processing_timeout", send_telegram=True)
         return False, "Timeout waiting for video processing"
     
     async def _wait_for_content_checks(self, timeout: int = 60) -> bool:
@@ -490,12 +587,12 @@ class TikTokUploader:
             }''')
             await self._delay(0.3, 0.6)
             
-            # Random mouse movement
-            viewport = await self.page.viewport_size
+            # Random mouse movement (viewport_size is a property, NOT a coroutine)
+            viewport = self.page.viewport_size
             if viewport:
                 for _ in range(random.randint(2, 4)):
-                    x = random.randint(100, viewport['width'] - 100)
-                    y = random.randint(100, viewport['height'] - 100)
+                    x = random.randint(100, min(viewport['width'] - 100, 1200))
+                    y = random.randint(100, min(viewport['height'] - 100, 700))
                     await self.page.mouse.move(x, y)
                     await self._delay(0.1, 0.3)
             
@@ -505,32 +602,40 @@ class TikTokUploader:
     
     async def _check_for_errors(self) -> Optional[str]:
         """Cek error messages di halaman"""
+        # Cari elemen yang kemungkinan besar berisi pesan error
         error_selectors = [
-            '[class*="error"]',
-            '[class*="Error"]',
-            '[class*="toast"]',
-            '[class*="Toast"]',
-            '[class*="alert"]',
-            '[class*="Alert"]',
+            '[role="alert"]',
+            '[class*="toast"][class*="error"]',
+            '[class*="Toast"][class*="error"]',
+            '[class*="error-message"]',
+            '[class*="ErrorMessage"]',
+            '[class*="snackbar"][class*="error"]',
         ]
         
         error_keywords = [
-            'error', 'failed', 'gagal', 'tidak dapat', 'cannot', 
-            'try again', 'coba lagi', 'something went wrong',
-            'kesalahan', 'tidak berhasil', 'rejected', 'ditolak'
+            'something went wrong', 'failed', 'gagal', 'tidak dapat', 'cannot', 
+            'try again', 'coba lagi', 'kesalahan', 'rejected', 'ditolak',
+            'video cannot be uploaded', 'upload failed', 'network error',
         ]
         
         for selector in error_selectors:
             try:
                 elements = await self.page.query_selector_all(selector)
                 for elem in elements:
-                    if await elem.is_visible():
+                    try:
+                        if not await elem.is_visible():
+                            continue
                         text = await elem.text_content()
                         if text:
-                            text_lower = text.lower()
+                            text_lower = text.lower().strip()
+                            # Skip teks yang terlalu pendek atau terlalu panjang (bukan error message)
+                            if len(text_lower) < 5 or len(text_lower) > 500:
+                                continue
                             for keyword in error_keywords:
                                 if keyword in text_lower:
                                     return text.strip()[:200]
+                    except:
+                        continue
             except:
                 continue
         
@@ -687,21 +792,78 @@ class TikTokUploader:
             try:
                 elem = await self.page.query_selector(selector)
                 if elem and await elem.is_visible():
+                    # Klik untuk focus
                     await elem.click()
-                    await self._delay(0.3, 0.6)
+                    await self._delay(0.5, 1)
                     
-                    # Clear existing text
+                    # Clear existing text dengan multiple method
+                    # Method 1: Ctrl+A lalu Delete
+                    await self.page.keyboard.press('Control+A')
+                    await self._delay(0.2, 0.4)
+                    await self.page.keyboard.press('Backspace')
+                    await self._delay(0.3, 0.5)
+                    
+                    # Method 2: Pastikan benar-benar kosong
                     await self.page.keyboard.press('Control+A')
                     await self._delay(0.1, 0.2)
+                    await self.page.keyboard.press('Delete')
+                    await self._delay(0.3, 0.5)
                     
-                    # Type caption
-                    await self._type_like_human(caption, fast=True)
+                    # Type caption - gunakan keyboard.type yang lebih reliable
+                    # Split caption jika panjang untuk menghindari timeout
+                    if len(caption) > 100:
+                        # Untuk caption panjang, ketik langsung (lebih cepat)
+                        await self.page.keyboard.type(caption, delay=50)
+                    else:
+                        await self._type_like_human(caption, fast=True)
                     
-                    logger.info("Caption added successfully")
-                    return True
+                    await self._delay(0.5, 1)
+                    
+                    # Verifikasi caption diinput
+                    try:
+                        text_content = await elem.text_content()
+                        if text_content and len(text_content.strip()) > 0:
+                            logger.info(f"Caption added successfully: {text_content[:50]}...")
+                            return True
+                        else:
+                            # Coba lagi dengan metode fill
+                            logger.warning("Caption appears empty, retrying with fill...")
+                            await elem.click()
+                            await self._delay(0.3, 0.5)
+                            await elem.fill(caption)
+                            await self._delay(0.5, 1)
+                            return True
+                    except:
+                        # Anggap berhasil jika tidak bisa verifikasi
+                        logger.info("Caption input completed (cannot verify)")
+                        return True
             except Exception as e:
                 logger.debug(f"Caption selector {selector} failed: {e}")
                 continue
+        
+        # Fallback: coba input via JavaScript
+        try:
+            logger.warning("Trying JavaScript caption input as fallback...")
+            result = await self.page.evaluate(f'''
+                () => {{
+                    const editors = document.querySelectorAll('[contenteditable="true"]');
+                    for (const editor of editors) {{
+                        if (editor.offsetParent !== null) {{  // visible check
+                            editor.focus();
+                            editor.textContent = '';
+                            editor.textContent = {json.dumps(caption)};
+                            editor.dispatchEvent(new Event('input', {{ bubbles: true }}));
+                            return true;
+                        }}
+                    }}
+                    return false;
+                }}
+            ''')
+            if result:
+                logger.info("Caption added via JavaScript fallback")
+                return True
+        except Exception as e:
+            logger.debug(f"JS caption fallback failed: {e}")
         
         logger.warning("Could not find caption input")
         return False
@@ -832,44 +994,85 @@ class TikTokUploader:
         start_time = asyncio.get_event_loop().time()
         last_screenshot_time = 0
         
+        # URL patterns yang menandakan SUKSES (sudah di-redirect ke halaman content)
+        success_patterns = [
+            'tiktokstudio/content',
+            'creator-center/content',
+            '/manage',
+            '/profile',
+            '/@',
+        ]
+        # URL patterns halaman upload (BUKAN sukses)
+        upload_patterns = ['/upload', 'studio/upload', 'creator-center/upload']
+        
         while (asyncio.get_event_loop().time() - start_time) < timeout:
             current_url = self.page.url
+            current_url_lower = current_url.lower()
             elapsed = int(asyncio.get_event_loop().time() - start_time)
             
-            # Cek redirect ke content/manage page (sukses)
-            success_urls = ['manage', 'profile', '/@', '/content', 'tiktokstudio/content', 'creator-center']
-            if any(x in current_url.lower() for x in success_urls):
-                logger.info(f"Upload success! Redirected to: {current_url}")
+            # Cek apakah URL sekarang adalah halaman sukses
+            is_upload_page = any(u in current_url_lower for u in upload_patterns)
+            is_success_page = any(p in current_url_lower for p in success_patterns)
+            
+            if is_success_page and not is_upload_page:
+                logger.info(f"Upload success! URL: {current_url}")
                 return True, "Video berhasil diupload ke TikTok!"
             
-            # Cek success messages
-            success_indicators = [
-                'text="Your video is being uploaded"',
-                'text="Video posted"',
-                'text="Posted"',
-                'text="Upload complete"',
-                'text="Berhasil diposting"',
-                'text="Video telah diposting"',
+            # Jika redirect ke login → session expired
+            if 'login' in current_url_lower and '/upload' not in current_url_lower:
+                return False, "Session expired - redirect ke login"
+            
+            # Cek success messages di halaman
+            success_texts = [
+                'Your video is being uploaded',
+                'Video posted',
+                'Upload complete',
+                'Berhasil diposting',
+                'Video telah diposting',
+                'Your video has been posted',
+                'Successfully posted',
+                'Your video is now live',
+                'Manage your posts',
+                'Your videos',
             ]
             
-            for selector in success_indicators:
+            for text in success_texts:
                 try:
-                    elem = await self.page.query_selector(selector)
+                    elem = await self.page.query_selector(f'text="{text}"')
                     if elem and await elem.is_visible():
-                        text = await elem.text_content()
-                        logger.info(f"Success: {text}")
+                        found_text = await elem.text_content()
+                        logger.info(f"Success indicator found: {found_text}")
                         return True, "Video berhasil diupload ke TikTok!"
                 except:
                     continue
             
+            # Cek lewat body text
+            try:
+                page_text = await self.page.evaluate('() => document.body.innerText.substring(0, 3000)')
+                page_text_lower = page_text.lower()
+                for text in ['your video is being uploaded', 'manage your posts', 'your video has been posted', 'your videos']:
+                    if text in page_text_lower and not is_upload_page:
+                        logger.info(f"Success text found in page body: {text}")
+                        return True, "Video berhasil diupload ke TikTok!"
+            except:
+                pass
+            
+            # Cek apakah ada popup "Continue to post?"
+            popup_handled = await self._handle_continue_to_post_popup()
+            if popup_handled:
+                logger.info("Handled popup during wait")
+                await self._delay(3, 5)
+            
             # Cek error
             error = await self._check_for_errors()
             if error:
-                return False, f"Upload error: {error}"
+                logger.warning(f"Error detected during upload wait: {error}")
+                if elapsed > 30:
+                    return False, f"Upload error: {error}"
             
             # Log progress
             if elapsed % 20 == 0 and elapsed > 0:
-                logger.info(f"Upload in progress... ({elapsed}s)")
+                logger.info(f"Upload in progress... ({elapsed}s) URL: {current_url}")
             
             # Screenshot setiap 40 detik
             if elapsed - last_screenshot_time >= 40:
@@ -878,7 +1081,16 @@ class TikTokUploader:
             
             await asyncio.sleep(3)
         
-        return False, "Upload timeout"
+        # Timeout - final check: mungkin sudah sukses tapi text belum terdeteksi
+        current_url_lower = self.page.url.lower()
+        is_upload_page = any(u in current_url_lower for u in upload_patterns)
+        is_success_page = any(p in current_url_lower for p in success_patterns)
+        if is_success_page and not is_upload_page:
+            logger.info(f"Upload success detected at timeout! URL: {self.page.url}")
+            return True, "Video berhasil diupload ke TikTok!"
+        
+        await self._take_screenshot("upload_timeout", send_telegram=True)
+        return False, "Upload timeout - cek screenshot untuk status terakhir"
     
     async def upload_video(self, video_path: str, caption: Optional[str] = None) -> Tuple[bool, str]:
         """
@@ -1016,8 +1228,8 @@ class TikTokUploader:
             # 12. Cari dan klik tombol Post
             logger.info("Step 8: Finding Post button...")
             
-            # Delay lebih lama seperti user yang review konten
-            await self._delay(8, 12)
+            # Delay seperti user yang review konten
+            await self._delay(5, 8)
             
             # Simulasi scroll ke bawah untuk lihat Post button
             await self.page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
@@ -1026,49 +1238,60 @@ class TikTokUploader:
             post_button = await self._find_post_button()
             
             if not post_button:
+                # Tunggu 10 detik lagi, mungkin button belum muncul
+                logger.warning("Post button not found, waiting 10s and retrying...")
+                await self._delay(8, 12)
+                post_button = await self._find_post_button()
+            
+            if not post_button:
                 await self._take_screenshot("post_button_not_found")
+                # Coba cek apakah button disabled
+                disabled_btn = await self.page.query_selector('button:has-text("Post")[disabled]')
+                if disabled_btn:
+                    return False, "Tombol Post ditemukan tapi disabled - video mungkin masih diproses"
                 return False, "Tombol Post tidak ditemukan"
             
-            # 13. Klik Post dengan delay
+            # 13. Klik Post
             logger.info("Step 9: Clicking Post button...")
-            await self._delay(1, 2)  # Delay sebelum klik
+            await self._delay(1, 2)
             clicked = await self._safe_click(post_button, "Post button")
             
             if not clicked:
-                # Retry dengan mencari ulang button
                 await self._delay(2, 3)
                 post_button = await self._find_post_button()
                 if post_button:
                     clicked = await self._safe_click(post_button, "Post button (retry)")
             
+            if not clicked:
+                await self._take_screenshot("post_click_failed")
+                return False, "Gagal klik tombol Post"
+            
             await self._delay(3, 5)
             
-            # Cek apakah ada popup "Continue to post?" dan klik "Post now"
+            # Handle popup "Continue to post?"
             popup_handled = await self._handle_continue_to_post_popup()
             if popup_handled:
                 logger.info("Handled 'Continue to post?' popup")
                 await self._delay(3, 5)
             
-            # Cek apakah ada error "Something went wrong"
+            # Handle error "Something went wrong" dengan retry
             error_handled = await self._handle_upload_error()
             if error_handled:
-                # Error ditemukan dan di-dismiss, tunggu lama dan coba lagi
-                logger.info("Error detected, waiting longer and retrying...")
-                await self._delay(10, 15)  # Tunggu lebih lama
+                logger.info("Error detected, waiting and retrying Post...")
+                await self._delay(10, 15)
                 await self._simulate_human_behavior()
-                await self._delay(5, 8)
+                await self._delay(3, 5)
                 
                 post_button = await self._find_post_button()
                 if post_button:
                     await self._safe_click(post_button, "Post button (retry after error)")
                     await self._delay(5, 8)
-                    # Cek popup lagi setelah retry
                     await self._handle_continue_to_post_popup()
             
             await self._take_screenshot("05_after_post_click", send_telegram=True)
             
-            # 12. Tunggu upload selesai
-            logger.info("Step 9: Waiting for upload to complete...")
+            # 14. Tunggu upload selesai
+            logger.info("Step 10: Waiting for upload to complete...")
             success, message = await self._wait_for_upload_complete(timeout=180)
             
             await self._take_screenshot("06_final", send_telegram=True)
@@ -1080,9 +1303,22 @@ class TikTokUploader:
             
             return success, message
             
+        except PlaywrightTimeout as e:
+            logger.error(f"Upload timeout: {e}")
+            try:
+                await self._take_screenshot("timeout_error")
+                await send_telegram_message(f"⏰ Upload timeout!\n📹 {video_file.name}")
+            except:
+                pass
+            return False, f"Upload timeout: browser operation timed out"
+            
         except Exception as e:
             logger.error(f"Upload failed: {e}")
-            await self._take_screenshot("error")
+            try:
+                await self._take_screenshot("error")
+                await send_telegram_message(f"❌ Upload error!\n📹 {video_file.name}\n💬 {str(e)[:100]}")
+            except:
+                pass
             return False, f"Upload error: {str(e)}"
         
         finally:

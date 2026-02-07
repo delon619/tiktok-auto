@@ -18,7 +18,7 @@ from config import (
     MAX_RETRY
 )
 from database import db, STATUS_PENDING, STATUS_POSTED, STATUS_FAILED
-from tiktok_uploader import TikTokUploader
+from tiktok_uploader import TikTokUploader, send_telegram_message
 from logger_setup import setup_logger
 
 logger = setup_logger("scheduler")
@@ -70,38 +70,69 @@ class VideoScheduler:
             if not Path(video_path).exists():
                 logger.error(f"File tidak ditemukan: {video_path}")
                 db.update_status(video_id, STATUS_FAILED, "File tidak ditemukan")
+                await send_telegram_message(f"❌ File tidak ditemukan:\n📁 {filename}")
                 return
             
-            # Upload video
-            success, message = await self.uploader.upload_video(video_path, caption)
+            # Upload video dengan retry mechanism
+            success = False
+            message = ""
+            max_attempts = 2  # Coba upload 2x jika gagal karena browser error
+            
+            for attempt in range(max_attempts):
+                if attempt > 0:
+                    logger.info(f"Retrying upload (attempt {attempt + 1}/{max_attempts})...")
+                    await send_telegram_message(f"🔄 Retry upload ({attempt + 1}/{max_attempts}):\n📹 {filename}")
+                
+                try:
+                    success, message = await self.uploader.upload_video(video_path, caption)
+                    if success:
+                        break
+                    
+                    # Jika gagal karena session expired, jangan retry
+                    if 'session' in message.lower() or 'expired' in message.lower() or 'login' in message.lower():
+                        logger.error(f"Session issue detected, stopping retry: {message}")
+                        break
+                        
+                except Exception as e:
+                    message = f"Upload exception: {str(e)}"
+                    logger.error(f"Upload attempt {attempt + 1} failed with exception: {e}")
+                    if attempt < max_attempts - 1:
+                        import asyncio as aio
+                        await aio.sleep(10)  # Tunggu sebelum retry
             
             if success:
                 # Update status ke posted
                 db.update_status(video_id, STATUS_POSTED)
                 logger.info(f"✅ Video {video_id} berhasil diupload: {message}")
-                
-                # Hapus file video untuk menghemat ruang (opsional)
-                # Uncomment baris berikut jika ingin otomatis hapus file setelah upload
-                # try:
-                #     os.remove(video_path)
-                #     logger.info(f"File deleted: {video_path}")
-                # except Exception as e:
-                #     logger.warning(f"Failed to delete file: {e}")
-                
+                await send_telegram_message(
+                    f"✅ Upload berhasil (scheduled)!\n"
+                    f"📹 {filename}\n"
+                    f"📊 Sisa antrian: {db.get_pending_count()} video"
+                )
             else:
                 # Gagal - cek retry
                 new_retry = db.increment_retry(video_id)
                 
                 if new_retry <= MAX_RETRY:
                     logger.warning(f"Upload gagal, akan retry ({new_retry}/{MAX_RETRY}): {message}")
-                    # Tidak update status, biarkan pending untuk retry berikutnya
+                    await send_telegram_message(
+                        f"⚠️ Upload gagal, akan retry ({new_retry}/{MAX_RETRY}):\n"
+                        f"📹 {filename}\n"
+                        f"💬 {message[:100]}"
+                    )
                 else:
-                    # Sudah melebihi max retry
                     db.update_status(video_id, STATUS_FAILED, message)
                     logger.error(f"❌ Video {video_id} gagal setelah {MAX_RETRY} retry: {message}")
+                    await send_telegram_message(
+                        f"❌ Upload gagal (final)!\n"
+                        f"📹 {filename}\n"
+                        f"💬 {message[:100]}\n"
+                        f"Gunakan /debug untuk screenshot"
+                    )
                     
         except Exception as e:
             logger.error(f"Error dalam scheduled job: {e}")
+            await send_telegram_message(f"❌ Scheduler error:\n{str(e)[:200]}")
             
         finally:
             self.is_uploading = False

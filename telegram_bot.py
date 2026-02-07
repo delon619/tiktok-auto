@@ -310,8 +310,13 @@ async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         from tiktok_uploader import upload_single_video
         
-        video_path = VIDEOS_DIR / next_video["filename"]
+        # Gunakan filepath dari database (absolute path), bukan construct ulang
+        video_path = Path(next_video["filepath"])
         caption = next_video["caption"] or TIKTOK_DEFAULT_CAPTION
+        
+        if not video_path.exists():
+            # Fallback: coba dari VIDEOS_DIR
+            video_path = VIDEOS_DIR / next_video["filename"]
         
         if not video_path.exists():
             db.update_status(next_video["id"], STATUS_FAILED, "File tidak ditemukan")
