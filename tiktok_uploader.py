@@ -1339,73 +1339,49 @@ class TikTokUploader:
             
             # ==== RE-CLICK POST jika masih di upload page setelah 15s ====
             if is_upload_page and elapsed > 15 and not post_reclicked:
-                logger.warning(f"Still on upload page after {elapsed}s - re-clicking Post button via mouse")
+                logger.warning(f"Still on upload page after {elapsed}s - re-clicking Post button")
                 await self._take_screenshot(f"reclick_post_{elapsed}s", send_telegram=True)
                 
-                # Re-klik Post via mouse coordinates (paling reliable)
                 try:
-                    result = await self.page.evaluate('''() => {
+                    # Metode 1: Focus + Enter (paling reliable untuk React)
+                    focused = await self.page.evaluate('''() => {
                         const buttons = document.querySelectorAll('button');
                         for (const btn of buttons) {
                             const text = btn.textContent.trim().toLowerCase();
                             if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
-                                const rect = btn.getBoundingClientRect();
-                                btn.scrollIntoView({behavior: 'smooth', block: 'center'});
-                                return {x: rect.x + rect.width/2, y: rect.y + rect.height/2, text: btn.textContent.trim()};
+                                btn.scrollIntoView({behavior: 'instant', block: 'center'});
+                                btn.focus();
+                                return true;
                             }
                         }
-                        return null;
+                        return false;
                     }''')
-                    if result:
-                        await asyncio.sleep(1)
-                        # Re-get coordinates after scroll
-                        result2 = await self.page.evaluate('''() => {
-                            const buttons = document.querySelectorAll('button');
-                            for (const btn of buttons) {
-                                const text = btn.textContent.trim().toLowerCase();
-                                if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
-                                    const rect = btn.getBoundingClientRect();
-                                    return {x: rect.x + rect.width/2, y: rect.y + rect.height/2};
-                                }
-                            }
-                            return null;
-                        }''')
-                        coords = result2 or result
-                        x, y = coords['x'], coords['y']
-                        await self.page.mouse.move(x, y)
+                    if focused:
                         await asyncio.sleep(0.5)
-                        await self.page.mouse.click(x, y)
-                        logger.info(f"Re-clicked Post button via mouse at ({x:.0f}, {y:.0f})")
+                        await self.page.keyboard.press("Enter")
+                        logger.info("Re-click: focused Post button and pressed Enter")
                         post_reclicked = True
                         await asyncio.sleep(5)
-                        
-                        # Handle popup setelah re-click
                         await self._handle_continue_to_post_popup()
                         
                         # Cek apakah masih di upload page
                         still_upload = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
                         if still_upload:
-                            logger.warning("Re-click mouse didn't work, trying full dispatchEvent...")
+                            # Metode 2: JS click
+                            logger.warning("Enter didn't work, trying JS click...")
                             await self.page.evaluate('''() => {
                                 const buttons = document.querySelectorAll('button');
                                 for (const btn of buttons) {
                                     const text = btn.textContent.trim().toLowerCase();
                                     if ((text === 'post' || text === 'posting') && !btn.disabled) {
-                                        const rect = btn.getBoundingClientRect();
-                                        const x = rect.x + rect.width / 2;
-                                        const y = rect.y + rect.height / 2;
-                                        const opts = {bubbles: true, cancelable: true, view: window, clientX: x, clientY: y};
-                                        btn.dispatchEvent(new PointerEvent('pointerdown', opts));
-                                        btn.dispatchEvent(new MouseEvent('mousedown', opts));
-                                        btn.dispatchEvent(new PointerEvent('pointerup', opts));
-                                        btn.dispatchEvent(new MouseEvent('mouseup', opts));
-                                        btn.dispatchEvent(new MouseEvent('click', opts));
+                                        btn.focus();
+                                        btn.click();
                                         return true;
                                     }
                                 }
                                 return false;
                             }''')
-                            logger.info("Dispatched full event sequence on Post button")
+                            logger.info("Re-click: JS focus+click")
                             await asyncio.sleep(5)
                             await self._handle_continue_to_post_popup()
                     else:
@@ -1415,12 +1391,22 @@ class TikTokUploader:
             
             # ==== RE-CLICK POST kedua kali jika masih stuck setelah 45s ====
             if is_upload_page and elapsed > 45 and post_reclicked:
-                logger.warning(f"Still on upload page after {elapsed}s - second re-click attempt via Playwright")
+                logger.warning(f"Still on upload page after {elapsed}s - second re-click: focus+Space and force click")
                 try:
                     loc = self.page.get_by_role("button", name="Post", exact=True)
                     if await loc.count() > 0:
-                        await loc.first.click(force=True, timeout=5000)
-                        logger.info("Second re-click via Playwright locator force click")
+                        await loc.first.scroll_into_view_if_needed()
+                        await asyncio.sleep(0.5)
+                        await loc.first.focus()
+                        await asyncio.sleep(0.3)
+                        await self.page.keyboard.press("Space")
+                        logger.info("Second re-click: focus+Space")
+                        await asyncio.sleep(5)
+                        
+                        still = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
+                        if still:
+                            await loc.first.click(force=True, timeout=5000)
+                            logger.info("Second re-click: Playwright force click")
                     post_reclicked = False  # Reset
                     await asyncio.sleep(10)
                     await self._handle_continue_to_post_popup()
@@ -1703,41 +1689,101 @@ class TikTokUploader:
                     logger.info("Post button already clicked by coordinates")
                     clicked = True
                 else:
-                    # === UTAMA: Klik via mouse coordinates (paling mirip klik manusia) ===
                     clicked = False
-                    try:
-                        box = await post_button.bounding_box()
-                        if box:
-                            x = box['x'] + box['width'] / 2 + random.uniform(-3, 3)
-                            y = box['y'] + box['height'] / 2 + random.uniform(-2, 2)
-                            logger.info(f"Post button box: x={box['x']:.0f} y={box['y']:.0f} w={box['width']:.0f} h={box['height']:.0f}")
-                            
-                            # Simulasi human: hover dulu, lalu klik
-                            await self.page.mouse.move(x, y)
-                            await self._delay(0.3, 0.6)
-                            await self.page.mouse.click(x, y)
-                            logger.info(f"Clicked Post button via mouse at ({x:.0f}, {y:.0f})")
+                    click_methods = [
+                        "focus+space",
+                        "focus+enter",
+                        "scroll+mouse",
+                        "js_click_direct",
+                        "dispatchEvent",
+                        "force_click",
+                        "locator_click",
+                    ]
+                    
+                    for method_idx, method_name in enumerate(click_methods):
+                        if clicked:
+                            break
+                        
+                        # Cek dulu apakah sudah pindah halaman
+                        curr = self.page.url.lower()
+                        if '/content' in curr and '/upload' not in curr:
+                            logger.info(f"Page already navigated to content - Post was clicked!")
                             clicked = True
+                            break
+                        
+                        logger.info(f"Click attempt {method_idx+1}/{len(click_methods)}: {method_name}")
+                        
+                        try:
+                            if method_name == "focus+enter":
+                                # Focus button lalu tekan Enter — paling reliable untuk React
+                                await post_button.scroll_into_view_if_needed()
+                                await asyncio.sleep(0.5)
+                                await post_button.focus()
+                                await asyncio.sleep(0.3)
+                                await self.page.keyboard.press("Enter")
+                                logger.info("Focused Post button and pressed Enter")
+                                
+                            elif method_name == "focus+space":
+                                # Focus + Space — alternatif keyboard
+                                await post_button.scroll_into_view_if_needed()
+                                await asyncio.sleep(0.5)
+                                await post_button.focus()
+                                await asyncio.sleep(0.3)
+                                await self.page.keyboard.press("Space")
+                                logger.info("Focused Post button and pressed Space")
                             
-                            # Cek apakah klik berhasil (tunggu 3 detik dan lihat reaksi)
-                            await asyncio.sleep(3)
-                            still_upload = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
+                            elif method_name == "scroll+mouse":
+                                # Scroll ke button, ambil bounding box baru, klik mouse
+                                await post_button.scroll_into_view_if_needed()
+                                await asyncio.sleep(1)
+                                box = await post_button.bounding_box()
+                                if box:
+                                    x = box['x'] + box['width'] / 2 + random.uniform(-3, 3)
+                                    y = box['y'] + box['height'] / 2 + random.uniform(-2, 2)
+                                    logger.info(f"Post button box after scroll: x={box['x']:.0f} y={box['y']:.0f} w={box['width']:.0f} h={box['height']:.0f}")
+                                    await self.page.mouse.move(x, y)
+                                    await asyncio.sleep(0.5)
+                                    await self.page.mouse.click(x, y)
+                                    logger.info(f"Mouse clicked at ({x:.0f}, {y:.0f})")
+                                else:
+                                    logger.warning("No bounding box after scroll")
+                                    continue
                             
-                            if still_upload:
-                                logger.warning("Page didn't react to mouse click, trying dispatchEvent...")
-                                # Dispatch full mouse event sequence
-                                await self.page.evaluate('''() => {
+                            elif method_name == "js_click_direct":
+                                # JS: focus + click() — bypass semua event interception
+                                result = await self.page.evaluate('''() => {
                                     const buttons = document.querySelectorAll('button');
                                     for (const btn of buttons) {
                                         const text = btn.textContent.trim().toLowerCase();
                                         if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                            btn.scrollIntoView({behavior: 'instant', block: 'center'});
+                                            btn.focus();
+                                            btn.click();
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }''')
+                                if result:
+                                    logger.info("JS focus+click executed")
+                                else:
+                                    continue
+                                    
+                            elif method_name == "dispatchEvent":
+                                # Full pointer+mouse event dispatch via JS
+                                result = await self.page.evaluate('''() => {
+                                    const buttons = document.querySelectorAll('button');
+                                    for (const btn of buttons) {
+                                        const text = btn.textContent.trim().toLowerCase();
+                                        if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                            btn.scrollIntoView({behavior: 'instant', block: 'center'});
                                             const rect = btn.getBoundingClientRect();
                                             const x = rect.x + rect.width / 2;
                                             const y = rect.y + rect.height / 2;
-                                            const opts = {bubbles: true, cancelable: true, view: window, clientX: x, clientY: y};
-                                            btn.dispatchEvent(new MouseEvent('pointerdown', opts));
+                                            const opts = {bubbles: true, cancelable: true, view: window, clientX: x, clientY: y, screenX: x, screenY: y};
+                                            btn.dispatchEvent(new PointerEvent('pointerdown', {...opts, pointerId: 1, pointerType: 'mouse'}));
                                             btn.dispatchEvent(new MouseEvent('mousedown', opts));
-                                            btn.dispatchEvent(new MouseEvent('pointerup', opts));
+                                            btn.dispatchEvent(new PointerEvent('pointerup', {...opts, pointerId: 1, pointerType: 'mouse'}));
                                             btn.dispatchEvent(new MouseEvent('mouseup', opts));
                                             btn.dispatchEvent(new MouseEvent('click', opts));
                                             return true;
@@ -1745,37 +1791,39 @@ class TikTokUploader:
                                     }
                                     return false;
                                 }''')
-                                logger.info("Dispatched full mouse event sequence on Post button")
-                                
-                                # Cek lagi setelah dispatchEvent
-                                await asyncio.sleep(3)
-                                still_upload2 = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
-                                
-                                if still_upload2:
-                                    logger.warning("dispatchEvent also didn't work, trying Playwright force click...")
-                                    try:
-                                        await post_button.click(force=True, timeout=5000)
-                                        logger.info("Force click succeeded")
-                                    except:
-                                        pass
+                                if result:
+                                    logger.info("Dispatched full pointer+mouse event sequence")
+                                else:
+                                    continue
                                     
-                                    # Satu lagi: coba klik via Playwright locator
-                                    await asyncio.sleep(2)
-                                    still_upload3 = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
-                                    if still_upload3:
-                                        logger.warning("All click methods tried, trying Playwright locator click...")
-                                        try:
-                                            loc = self.page.get_by_role("button", name="Post", exact=True)
-                                            await loc.click(timeout=5000)
-                                            logger.info("Playwright locator click succeeded")
-                                        except:
-                                            pass
+                            elif method_name == "force_click":
+                                await post_button.scroll_into_view_if_needed()
+                                await asyncio.sleep(0.5)
+                                await post_button.click(force=True, timeout=5000)
+                                logger.info("Playwright force click executed")
+                                
+                            elif method_name == "locator_click":
+                                loc = self.page.get_by_role("button", name="Post", exact=True)
+                                await loc.scroll_into_view_if_needed()
+                                await asyncio.sleep(0.5)
+                                await loc.click(timeout=5000)
+                                logger.info("Playwright locator click executed")
+                        
+                        except Exception as e:
+                            logger.warning(f"Click method {method_name} failed: {e}")
+                            continue
+                        
+                        # Tunggu reaksi halaman setelah klik
+                        await asyncio.sleep(4)
+                        after_url = self.page.url.lower()
+                        if '/content' in after_url and '/upload' not in after_url:
+                            logger.info(f"Post button clicked successfully via {method_name}!")
+                            clicked = True
+                        elif '/upload' not in after_url and 'login' not in after_url:
+                            logger.info(f"Page navigated to {self.page.url} via {method_name}")
+                            clicked = True
                         else:
-                            logger.warning("Post button has no bounding box, falling back to _safe_click")
-                            clicked = await self._safe_click(post_button, "Post button")
-                    except Exception as e:
-                        logger.warning(f"Coordinate click failed: {e}, falling back to _safe_click")
-                        clicked = await self._safe_click(post_button, "Post button")
+                            logger.warning(f"Method {method_name} didn't trigger navigation, trying next...")
                 
                 if not clicked:
                     await self._take_screenshot("post_click_failed")
