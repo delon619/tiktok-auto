@@ -1,12 +1,15 @@
 # Dockerfile for TikTok Auto Upload System
 FROM python:3.11-slim
 
-# Install dependencies for Playwright
+# Install dependencies for Playwright + extra fonts untuk anti-fingerprint
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
     fonts-liberation \
+    fonts-noto-color-emoji \
+    fonts-freefont-ttf \
+    fontconfig \
     libasound2 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
@@ -23,9 +26,14 @@ RUN apt-get update && apt-get install -y \
     libxfixes3 \
     libxkbcommon0 \
     libxrandr2 \
+    libxshmfence1 \
+    libgl1-mesa-dri \
+    libgl1-mesa-glx \
+    libegl1-mesa \
     xdg-utils \
     libu2f-udev \
     libvulkan1 \
+    && fc-cache -f -v \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -37,8 +45,8 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers
-RUN playwright install chromium
+# Install Playwright browsers with system deps
+RUN playwright install --with-deps chromium
 
 # Copy application code
 COPY . .

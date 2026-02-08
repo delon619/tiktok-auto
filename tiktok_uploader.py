@@ -231,118 +231,330 @@ class TikTokUploader:
             except Exception as e:
                 logger.debug(f"Could not remove lock {lock_file}: {e}")
         
-        # Random viewport
-        viewport_width = random.randint(1280, 1400)
-        viewport_height = random.randint(750, 850)
+        # Random viewport - gunakan resolusi umum
+        viewport_width = random.choice([1366, 1440, 1536, 1920])
+        viewport_height = random.choice([768, 800, 864, 1080])
         
-        # User agents Chrome terbaru (Desember 2025 - Februari 2026)
-        user_agents = [
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-        ]
+        # Deteksi OS untuk user agent yang KONSISTEN dengan platform
+        import platform as _platform
+        is_linux = _platform.system() == 'Linux'
+        
+        if is_linux:
+            # Di server Linux/Docker — gunakan HANYA Windows UA
+            # karena kita akan spoof semua properties ke Windows
+            user_agents = [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+            ]
+        else:
+            user_agents = [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+            ]
+        
+        chosen_ua = random.choice(user_agents)
+        # Extract Chrome version from UA for userAgentData spoofing
+        import re as _re  
+        chrome_ver_match = _re.search(r'Chrome/(\d+)', chosen_ua)
+        self._chrome_version = chrome_ver_match.group(1) if chrome_ver_match else '131'
         
         self.context = await self._playwright.chromium.launch_persistent_context(
             user_data_dir=str(BROWSER_PROFILE_DIR),
             headless=headless,
             viewport={'width': viewport_width, 'height': viewport_height},
-            user_agent=random.choice(user_agents),
+            user_agent=chosen_ua,
             locale='en-US',
             timezone_id='Asia/Jakarta',
             color_scheme='light',
+            screen={'width': viewport_width, 'height': viewport_height},
             args=[
                 '--disable-blink-features=AutomationControlled',
                 '--disable-infobars',
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
                 '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--window-size=1366,768',
+                # JANGAN pakai --disable-gpu! Pakai swiftshader supaya WebGL tetap tersedia
+                '--use-gl=swiftshader',
+                '--enable-webgl',
+                f'--window-size={viewport_width},{viewport_height}',
                 '--start-maximized',
                 '--disable-features=IsolateOrigins,site-per-process',
-                '--disable-web-security',
                 '--allow-running-insecure-content',
+                # Tambahan anti-detection
+                '--disable-component-extensions-with-background-pages',
+                '--disable-default-apps',
+                '--disable-extensions',
+                '--hide-scrollbars',
+                '--mute-audio',
+                '--disable-background-networking',
+                '--metrics-recording-only',
+                '--disable-sync',
             ],
             ignore_default_args=['--enable-automation'],
         )
         
-        # Anti-detection script - comprehensive stealth
-        await self.context.add_init_script("""
+        # Anti-detection script - comprehensive stealth (versi robust untuk headless)
+        chrome_ver = self._chrome_version
+        await self.context.add_init_script(f"""
             // === Core: webdriver property ===
-            Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+            Object.defineProperty(navigator, 'webdriver', {{ get: () => undefined }});
+            // Hapus juga dari prototype
+            delete Object.getPrototypeOf(navigator).webdriver;
             
-            // === Chrome object ===
-            window.chrome = {
-                runtime: { 
-                    onMessage: { addListener: function() {}, removeListener: function() {} },
-                    sendMessage: function() {},
-                    connect: function() { return { onMessage: { addListener: function() {} } }; },
-                    PlatformOs: {MAC: 'mac', WIN: 'win', ANDROID: 'android', CROS: 'cros', LINUX: 'linux', OPENBSD: 'openbsd'},
-                    PlatformArch: {ARM: 'arm', X86_32: 'x86-32', X86_64: 'x86-64', MIPS: 'mips', MIPS64: 'mips64'},
-                    PlatformNaclArch: {ARM: 'arm', X86_32: 'x86-32', X86_64: 'x86-64', MIPS: 'mips', MIPS64: 'mips64'},
-                    RequestUpdateCheckStatus: {THROTTLED: 'throttled', NO_UPDATE: 'no_update', UPDATE_AVAILABLE: 'update_available'},
-                    OnInstalledReason: {INSTALL: 'install', UPDATE: 'update', CHROME_UPDATE: 'chrome_update', SHARED_MODULE_UPDATE: 'shared_module_update'},
-                    OnRestartRequiredReason: {APP_UPDATE: 'app_update', OS_UPDATE: 'os_update', PERIODIC: 'periodic'},
-                },
-                loadTimes: function() { return {}; },
-                csi: function() { return {}; },
-                app: { isInstalled: false, InstallState: { DISABLED: 'disabled', INSTALLED: 'installed', NOT_INSTALLED: 'not_installed' }, RunningState: { CANNOT_RUN: 'cannot_run', READY_TO_RUN: 'ready_to_run', RUNNING: 'running' } }
-            };
+            // === Chrome object (lengkap) ===
+            if (!window.chrome) window.chrome = {{}};
+            window.chrome.runtime = {{ 
+                onMessage: {{ addListener: function() {{}}, removeListener: function() {{}}, hasListener: function() {{ return false; }} }},
+                onConnect: {{ addListener: function() {{}}, removeListener: function() {{}} }},
+                sendMessage: function(a, b, c) {{ if (typeof c === 'function') c(); }},
+                connect: function() {{ return {{ onMessage: {{ addListener: function() {{}} }}, postMessage: function() {{}}, disconnect: function() {{}} }}; }},
+                getManifest: function() {{ return {{}}; }},
+                getURL: function(path) {{ return 'chrome-extension://fake/' + path; }},
+                id: undefined,
+                PlatformOs: {{MAC: 'mac', WIN: 'win', ANDROID: 'android', CROS: 'cros', LINUX: 'linux', OPENBSD: 'openbsd'}},
+                PlatformArch: {{ARM: 'arm', X86_32: 'x86-32', X86_64: 'x86-64', MIPS: 'mips', MIPS64: 'mips64'}},
+                PlatformNaclArch: {{ARM: 'arm', X86_32: 'x86-32', X86_64: 'x86-64', MIPS: 'mips', MIPS64: 'mips64'}},
+                RequestUpdateCheckStatus: {{THROTTLED: 'throttled', NO_UPDATE: 'no_update', UPDATE_AVAILABLE: 'update_available'}},
+                OnInstalledReason: {{INSTALL: 'install', UPDATE: 'update', CHROME_UPDATE: 'chrome_update', SHARED_MODULE_UPDATE: 'shared_module_update'}},
+                OnRestartRequiredReason: {{APP_UPDATE: 'app_update', OS_UPDATE: 'os_update', PERIODIC: 'periodic'}},
+            }};
+            window.chrome.loadTimes = function() {{ return {{ requestTime: Date.now() / 1000, startLoadTime: Date.now() / 1000, commitLoadTime: Date.now() / 1000, finishDocumentLoadTime: Date.now() / 1000, finishLoadTime: Date.now() / 1000, firstPaintTime: Date.now() / 1000, firstPaintAfterLoadTime: 0, navigationType: 'Other', wasFetchedViaSpdy: false, wasNpnNegotiated: true, npnNegotiatedProtocol: 'h2', wasAlternateProtocolAvailable: false, connectionInfo: 'h2' }}; }};
+            window.chrome.csi = function() {{ return {{ pageT: Date.now(), startE: Date.now(), onloadT: Date.now(), tran: 15 }}; }};
+            window.chrome.app = {{ isInstalled: false, InstallState: {{ DISABLED: 'disabled', INSTALLED: 'installed', NOT_INSTALLED: 'not_installed' }}, RunningState: {{ CANNOT_RUN: 'cannot_run', READY_TO_RUN: 'ready_to_run', RUNNING: 'running' }}, getDetails: function() {{ return null; }}, getIsInstalled: function() {{ return false; }} }};
             
-            // === Plugins ===
-            Object.defineProperty(navigator, 'plugins', {
-                get: () => {
+            // === Plugins (Chrome-like array) ===
+            Object.defineProperty(navigator, 'plugins', {{
+                get: () => {{
+                    const makePlugin = (name, filename, desc, mimeType) => {{
+                        const p = {{ name, filename, description: desc, length: 1 }};
+                        p[0] = {{ type: mimeType, suffixes: '', description: desc, enabledPlugin: p }};
+                        return p;
+                    }};
                     const plugins = [
-                        {name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer', description: 'Portable Document Format', length: 1},
-                        {name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', description: '', length: 1},
-                        {name: 'Native Client', filename: 'internal-nacl-plugin', description: '', length: 2},
+                        makePlugin('Chrome PDF Plugin', 'internal-pdf-viewer', 'Portable Document Format', 'application/x-google-chrome-pdf'),
+                        makePlugin('Chrome PDF Viewer', 'mhjfbmdgcfjbbpaeojofohoefgiehjai', '', 'application/pdf'),
+                        makePlugin('Native Client', 'internal-nacl-plugin', '', 'application/x-nacl'),
                     ];
-                    plugins.item = (i) => plugins[i];
-                    plugins.namedItem = (n) => plugins.find(p => p.name === n);
-                    plugins.refresh = () => {};
+                    plugins.item = (i) => plugins[i] || null;
+                    plugins.namedItem = (n) => plugins.find(p => p.name === n) || null;
+                    plugins.refresh = () => {{}};
+                    Object.setPrototypeOf(plugins, PluginArray.prototype);
                     return plugins;
-                }
-            });
+                }}
+            }});
             
-            // === Navigator properties ===
-            Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en', 'id'] });
-            Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => 8 });
-            Object.defineProperty(navigator, 'deviceMemory', { get: () => 8 });
-            Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 0 });
-            Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
+            // === MimeTypes ===
+            Object.defineProperty(navigator, 'mimeTypes', {{
+                get: () => {{
+                    const mimes = [
+                        {{ type: 'application/pdf', suffixes: 'pdf', description: 'Portable Document Format' }},
+                        {{ type: 'application/x-google-chrome-pdf', suffixes: 'pdf', description: 'Portable Document Format' }},
+                        {{ type: 'application/x-nacl', suffixes: '', description: 'Native Client Executable' }},
+                    ];
+                    mimes.item = (i) => mimes[i] || null;
+                    mimes.namedItem = (n) => mimes.find(m => m.type === n) || null;
+                    Object.setPrototypeOf(mimes, MimeTypeArray.prototype);
+                    return mimes;
+                }}
+            }});
+            
+            // === Navigator properties (KONSISTEN dengan UA Windows) ===
+            Object.defineProperty(navigator, 'languages', {{ get: () => ['en-US', 'en'] }});
+            Object.defineProperty(navigator, 'hardwareConcurrency', {{ get: () => 8 }});
+            Object.defineProperty(navigator, 'deviceMemory', {{ get: () => 8 }});
+            Object.defineProperty(navigator, 'maxTouchPoints', {{ get: () => 0 }});
+            Object.defineProperty(navigator, 'platform', {{ get: () => 'Win32' }});
+            Object.defineProperty(navigator, 'vendor', {{ get: () => 'Google Inc.' }});
+            Object.defineProperty(navigator, 'appVersion', {{ get: () => navigator.userAgent.replace('Mozilla/', '') }});
+            
+            // === navigator.userAgentData (Chrome 90+ API - PENTING!) ===
+            if (!navigator.userAgentData) {{
+                Object.defineProperty(navigator, 'userAgentData', {{
+                    get: () => ({{
+                        brands: [
+                            {{ brand: 'Not A(Brand', version: '99' }},
+                            {{ brand: 'Google Chrome', version: '{chrome_ver}' }},
+                            {{ brand: 'Chromium', version: '{chrome_ver}' }},
+                        ],
+                        mobile: false,
+                        platform: 'Windows',
+                        getHighEntropyValues: function(hints) {{
+                            return Promise.resolve({{
+                                architecture: 'x86',
+                                bitness: '64',
+                                brands: this.brands,
+                                fullVersionList: [
+                                    {{ brand: 'Not A(Brand', version: '99.0.0.0' }},
+                                    {{ brand: 'Google Chrome', version: '{chrome_ver}.0.0.0' }},
+                                    {{ brand: 'Chromium', version: '{chrome_ver}.0.0.0' }},
+                                ],
+                                mobile: false,
+                                model: '',
+                                platform: 'Windows',
+                                platformVersion: '15.0.0',
+                                uaFullVersion: '{chrome_ver}.0.0.0',
+                                wow64: false,
+                            }});
+                        }},
+                        toJSON: function() {{
+                            return {{ brands: this.brands, mobile: this.mobile, platform: this.platform }};
+                        }}
+                    }})
+                }});
+            }}
+            
+            // === Screen properties (KRUSIAL di headless!) ===
+            const _screenWidth = window.innerWidth || {viewport_width};
+            const _screenHeight = window.innerHeight || {viewport_height};
+            Object.defineProperty(screen, 'width', {{ get: () => _screenWidth }});
+            Object.defineProperty(screen, 'height', {{ get: () => _screenHeight }});
+            Object.defineProperty(screen, 'availWidth', {{ get: () => _screenWidth }});
+            Object.defineProperty(screen, 'availHeight', {{ get: () => _screenHeight - 40 }});
+            Object.defineProperty(screen, 'colorDepth', {{ get: () => 24 }});
+            Object.defineProperty(screen, 'pixelDepth', {{ get: () => 24 }});
+            Object.defineProperty(window, 'outerWidth', {{ get: () => _screenWidth }});
+            Object.defineProperty(window, 'outerHeight', {{ get: () => _screenHeight + 85 }});
+            Object.defineProperty(window, 'devicePixelRatio', {{ get: () => 1 }});
+            Object.defineProperty(window, 'screenX', {{ get: () => 0 }});
+            Object.defineProperty(window, 'screenY', {{ get: () => 0 }});
             
             // === Permissions ===
-            const originalQuery = window.navigator.permissions.query;
-            window.navigator.permissions.query = (parameters) => (
-                parameters.name === 'notifications' ?
-                    Promise.resolve({ state: Notification.permission }) :
-                    originalQuery(parameters)
-            );
+            if (navigator.permissions) {{
+                const originalQuery = navigator.permissions.query.bind(navigator.permissions);
+                navigator.permissions.query = (parameters) => {{
+                    if (parameters.name === 'notifications') {{
+                        return Promise.resolve({{ state: Notification.permission, onchange: null }});
+                    }}
+                    return originalQuery(parameters).catch(() => ({{ state: 'prompt', onchange: null }}));
+                }};
+            }}
             
-            // === WebGL vendor/renderer (penting untuk fingerprint) ===
-            const getParameterOrig = WebGLRenderingContext.prototype.getParameter;
-            WebGLRenderingContext.prototype.getParameter = function(parameter) {
-                if (parameter === 37445) return 'Google Inc. (NVIDIA)';
-                if (parameter === 37446) return 'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11)';
-                return getParameterOrig.call(this, parameter);
-            };
-            const getParameterOrig2 = WebGL2RenderingContext.prototype.getParameter;
-            WebGL2RenderingContext.prototype.getParameter = function(parameter) {
-                if (parameter === 37445) return 'Google Inc. (NVIDIA)';
-                if (parameter === 37446) return 'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11)';
-                return getParameterOrig2.call(this, parameter);
-            };
+            // === WebGL vendor/renderer (SAFE - wrapped in try/catch untuk headless) ===
+            try {{
+                if (typeof WebGLRenderingContext !== 'undefined') {{
+                    const getParameterOrig = WebGLRenderingContext.prototype.getParameter;
+                    WebGLRenderingContext.prototype.getParameter = function(parameter) {{
+                        if (parameter === 37445) return 'Google Inc. (NVIDIA)';
+                        if (parameter === 37446) return 'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11)';
+                        return getParameterOrig.call(this, parameter);
+                    }};
+                }}
+            }} catch(e) {{}}
+            try {{
+                if (typeof WebGL2RenderingContext !== 'undefined') {{
+                    const getParameterOrig2 = WebGL2RenderingContext.prototype.getParameter;
+                    WebGL2RenderingContext.prototype.getParameter = function(parameter) {{
+                        if (parameter === 37445) return 'Google Inc. (NVIDIA)';
+                        if (parameter === 37446) return 'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11)';
+                        return getParameterOrig2.call(this, parameter);
+                    }};
+                }}
+            }} catch(e) {{}}
+            
+            // === Canvas fingerprint noise ===
+            try {{
+                const origToDataURL = HTMLCanvasElement.prototype.toDataURL;
+                HTMLCanvasElement.prototype.toDataURL = function(type) {{
+                    if (this.width === 0 && this.height === 0) return origToDataURL.call(this, type);
+                    const ctx = this.getContext('2d');
+                    if (ctx) {{
+                        // Add subtle noise to canvas fingerprint
+                        const imageData = ctx.getImageData(0, 0, Math.min(this.width, 2), Math.min(this.height, 2));
+                        for (let i = 0; i < imageData.data.length; i += 4) {{
+                            imageData.data[i] = imageData.data[i] ^ 1; // flip LSB of red channel
+                        }}
+                        ctx.putImageData(imageData, 0, 0);
+                    }}
+                    return origToDataURL.call(this, type);
+                }};
+            }} catch(e) {{}}
+            
+            // === AudioContext fingerprint ===
+            try {{
+                const origGetFloatFreqData = AnalyserNode.prototype.getFloatFrequencyData;
+                AnalyserNode.prototype.getFloatFrequencyData = function(array) {{
+                    const result = origGetFloatFreqData.call(this, array);
+                    for (let i = 0; i < array.length; i++) {{
+                        array[i] = array[i] + Math.random() * 0.0001;
+                    }}
+                    return result;
+                }};
+            }} catch(e) {{}}
+            
+            // === Connection API ===
+            if (!navigator.connection) {{
+                Object.defineProperty(navigator, 'connection', {{
+                    get: () => ({{
+                        effectiveType: '4g',
+                        rtt: 50,
+                        downlink: 10,
+                        saveData: false,
+                        onchange: null,
+                        addEventListener: function() {{}},
+                        removeEventListener: function() {{}},
+                    }})
+                }});
+            }}
+            
+            // === Battery API ===
+            if (!navigator.getBattery) {{
+                navigator.getBattery = () => Promise.resolve({{
+                    charging: true,
+                    chargingTime: 0,
+                    dischargingTime: Infinity,
+                    level: 1,
+                    addEventListener: function() {{}},
+                    removeEventListener: function() {{}},
+                }});
+            }}
+            
+            // === Keyboard API (deteksi headless) ===
+            if (!navigator.keyboard) {{
+                Object.defineProperty(navigator, 'keyboard', {{
+                    get: () => ({{
+                        getLayoutMap: () => Promise.resolve(new Map()),
+                        lock: () => Promise.resolve(),
+                        unlock: () => {{}},
+                    }})
+                }});
+            }}
             
             // === Remove automation indicators ===
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
+            delete window.__playwright;
+            delete window.__pw_manual;
             
             // === Prevent iframe detection ===
-            Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
-                get: function() { return window; }
-            });
+            try {{
+                Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {{
+                    get: function() {{ return window; }}
+                }});
+            }} catch(e) {{}}
+            
+            // === Notification constructor ===
+            if (!window.Notification) {{
+                window.Notification = {{ permission: 'default', requestPermission: () => Promise.resolve('default') }};
+            }}
+            
+            // === Performance timing (headless bisa berbeda) ===
+            try {{
+                const origEntries = performance.getEntries;
+                performance.getEntries = function() {{
+                    return origEntries.call(this).filter(e => !e.name.includes('playwright'));
+                }};
+            }} catch(e) {{}}
+            
+            // === Prevent toString detection of overridden functions ===
+            const _origToString = Function.prototype.toString;
+            const _nativeFns = new Map();
+            Function.prototype.toString = function() {{
+                if (_nativeFns.has(this)) return _nativeFns.get(this);
+                return _origToString.call(this);
+            }};
+            // Store native function signatures
+            _nativeFns.set(Function.prototype.toString, 'function toString() {{ [native code] }}');
         """)
         
         # Load cookies
@@ -354,6 +566,27 @@ class TikTokUploader:
             logger.warning(f"Could not load cookies: {e}")
         
         self.page = self.context.pages[0] if self.context.pages else await self.context.new_page()
+        
+        # CDP-level stealth: override User-Agent di protocol level (bypass HeadlessChrome)
+        try:
+            client = await self.page.context.new_cdp_session(self.page)
+            # Hapus "HeadlessChrome" identifier dari UA di CDP level
+            await client.send('Network.setUserAgentOverride', {
+                'userAgent': chosen_ua,
+                'acceptLanguage': 'en-US,en;q=0.9',
+                'platform': 'Win32',
+            })
+            # Sembunyikan CDP endpoint
+            await client.send('Page.addScriptToEvaluateOnNewDocument', {
+                'source': '''
+                    // Hide CDP-specific indicators
+                    Object.defineProperty(navigator, 'webdriver', {get: () => undefined});
+                '''
+            })
+            await client.detach()
+            logger.debug("CDP stealth applied successfully")
+        except Exception as e:
+            logger.debug(f"CDP stealth failed (non-critical): {e}")
         
         # Set default timeout
         self.page.set_default_timeout(30000)
@@ -2029,22 +2262,43 @@ class TikTokUploader:
                     await self._dismiss_error_toast()
                     
                     if post_attempt < max_post_attempts - 1:
-                        # Tunggu lebih lama sebelum retry
-                        wait_time = 20 * (post_attempt + 1)  # 20s, 40s
-                        logger.info(f"Waiting {wait_time}s before retry...")
-                        await self._delay(wait_time, wait_time + 10)
+                        # JANGAN reload halaman! Video masih ter-attach.
+                        # Cukup tunggu, dismiss error, dan klik Post lagi.
+                        wait_time = 15 + (10 * post_attempt)  # 15s, 25s, 35s, 45s
+                        logger.info(f"Waiting {wait_time}s before retry (NO reload)...")
+                        await self._delay(wait_time, wait_time + 5)
                         
-                        # Reload halaman untuk fresh state
-                        logger.info("Reloading page for fresh retry...")
-                        await self.page.reload(wait_until='domcontentloaded', timeout=30000)
-                        await self._delay(5, 8)
+                        # Dismiss toast sekali lagi kalau masih ada
+                        await self._dismiss_error_toast()
+                        await self._delay(2, 3)
                         
-                        # Tunggu content checks lagi sebelum retry
-                        logger.info("Re-checking content checks before retry...")
-                        await self._wait_for_content_checks(timeout=90)
-                        await self._delay(3, 5)
+                        # Cek apakah masih ada error
+                        still_error = await self._detect_something_went_wrong()
+                        if still_error:
+                            logger.info("Error toast still visible, dismissing again...")
+                            await self._dismiss_error_toast()
+                            await self._delay(3, 5)
                         
-                        # Human behavior sebelum retry
+                        # Cek apakah video masih attached (Post button masih ada)
+                        post_check = await self._find_post_button()
+                        if not post_check:
+                            # Video hilang, perlu re-upload → keluar dari retry loop
+                            logger.warning("Post button not found after error - video may have been lost")
+                            await self._take_screenshot("video_lost_after_error", send_telegram=True)
+                            return False, "Upload gagal: Video hilang setelah error. Coba upload ulang."
+                        
+                        # Verify content checks masih OK (tanpa refresh)
+                        logger.info("Verifying content checks still OK...")
+                        page_text = await self.page.evaluate('() => document.body.textContent.toLowerCase()')
+                        no_issues = page_text.count('no issues found')
+                        logger.info(f"Content checks: {no_issues}x 'No issues found'")
+                        
+                        if no_issues < 2:
+                            # Tunggu content checks selesai
+                            logger.info("Content checks not ready, waiting...")
+                            await self._wait_for_content_checks(timeout=60)
+                        
+                        # Human behavior minimal sebelum retry
                         await self._simulate_human_behavior()
                         await self._delay(3, 5)
                         
@@ -2057,7 +2311,7 @@ class TikTokUploader:
                     else:
                         # Semua attempt gagal
                         await self._take_screenshot("all_post_attempts_failed", send_telegram=True)
-                        return False, "Upload gagal: 'Something went wrong' setelah 3x retry. Video mungkin bermasalah."
+                        return False, f"Upload gagal: 'Something went wrong' setelah {max_post_attempts}x retry. Video mungkin bermasalah."
                 else:
                     # Tidak ada error → Post berhasil diklik
                     post_success = True
