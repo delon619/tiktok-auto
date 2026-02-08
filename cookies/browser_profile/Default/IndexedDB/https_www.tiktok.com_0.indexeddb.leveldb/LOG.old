@@ -1,3 +1,6 @@
-2026/02/08-16:27:18.770 362c Reusing MANIFEST C:\Users\Delon\apaaja\tiktok-auto #2\cookies\browser_profile\Default\IndexedDB\https_www.tiktok.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/02/08-16:27:18.771 362c Recovering log #3
-2026/02/08-16:27:18.816 362c Reusing old log C:\Users\Delon\apaaja\tiktok-auto #2\cookies\browser_profile\Default\IndexedDB\https_www.tiktok.com_0.indexeddb.leveldb/000003.log 
+2026/02/08-16:32:37.211 83e4 Reusing MANIFEST C:\Users\Delon\apaaja\tiktok-auto #2\cookies\browser_profile\Default\IndexedDB\https_www.tiktok.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/02/08-16:32:37.212 83e4 Recovering log #3
+2026/02/08-16:32:37.261 83e4 Reusing old log C:\Users\Delon\apaaja\tiktok-auto #2\cookies\browser_profile\Default\IndexedDB\https_www.tiktok.com_0.indexeddb.leveldb/000003.log 
+2026/02/08-16:32:51.009 4464 Level-0 table #5: started
+2026/02/08-16:32:51.054 4464 Level-0 table #5: 1850995 bytes OK
+2026/02/08-16:32:51.058 4464 Delete type=0 #3

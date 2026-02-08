@@ -1343,49 +1343,50 @@ class TikTokUploader:
                 await self._take_screenshot(f"reclick_post_{elapsed}s", send_telegram=True)
                 
                 try:
-                    # Metode 1: Focus + Enter (paling reliable untuk React)
-                    focused = await self.page.evaluate('''() => {
+                    # Metode 1: React fiber onClick langsung
+                    react_result = await self.page.evaluate('''() => {
                         const buttons = document.querySelectorAll('button');
                         for (const btn of buttons) {
                             const text = btn.textContent.trim().toLowerCase();
                             if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
                                 btn.scrollIntoView({behavior: 'instant', block: 'center'});
-                                btn.focus();
-                                return true;
-                            }
-                        }
-                        return false;
-                    }''')
-                    if focused:
-                        await asyncio.sleep(0.5)
-                        await self.page.keyboard.press("Enter")
-                        logger.info("Re-click: focused Post button and pressed Enter")
-                        post_reclicked = True
-                        await asyncio.sleep(5)
-                        await self._handle_continue_to_post_popup()
-                        
-                        # Cek apakah masih di upload page
-                        still_upload = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
-                        if still_upload:
-                            # Metode 2: JS click
-                            logger.warning("Enter didn't work, trying JS click...")
-                            await self.page.evaluate('''() => {
-                                const buttons = document.querySelectorAll('button');
-                                for (const btn of buttons) {
-                                    const text = btn.textContent.trim().toLowerCase();
-                                    if ((text === 'post' || text === 'posting') && !btn.disabled) {
-                                        btn.focus();
-                                        btn.click();
-                                        return true;
+                                const propsKey = Object.keys(btn).find(k => k.startsWith('__reactProps$'));
+                                if (propsKey && btn[propsKey] && btn[propsKey].onClick) {
+                                    btn[propsKey].onClick({
+                                        preventDefault: () => {}, stopPropagation: () => {},
+                                        nativeEvent: new MouseEvent('click'),
+                                        target: btn, currentTarget: btn, type: 'click', bubbles: true
+                                    });
+                                    return 'reactProps';
+                                }
+                                const fibKey = Object.keys(btn).find(k => k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$'));
+                                if (fibKey) {
+                                    let fiber = btn[fibKey];
+                                    let depth = 0;
+                                    while (fiber && depth < 20) {
+                                        if (fiber.memoizedProps && typeof fiber.memoizedProps.onClick === 'function') {
+                                            fiber.memoizedProps.onClick({
+                                                preventDefault: () => {}, stopPropagation: () => {},
+                                                nativeEvent: new MouseEvent('click'),
+                                                target: btn, currentTarget: btn, type: 'click', bubbles: true
+                                            });
+                                            return 'reactFiber';
+                                        }
+                                        fiber = fiber.return;
+                                        depth++;
                                     }
                                 }
-                                return false;
-                            }''')
-                            logger.info("Re-click: JS focus+click")
-                            await asyncio.sleep(5)
-                            await self._handle_continue_to_post_popup()
-                    else:
-                        logger.warning("Could not find Post button for re-click")
+                                btn.focus();
+                                btn.click();
+                                return 'jsClick';
+                            }
+                        }
+                        return null;
+                    }''')
+                    logger.info(f"Re-click result: {react_result}")
+                    post_reclicked = True
+                    await asyncio.sleep(5)
+                    await self._handle_continue_to_post_popup()
                 except Exception as e:
                     logger.debug(f"Re-click error: {e}")
             
@@ -1691,6 +1692,8 @@ class TikTokUploader:
                 else:
                     clicked = False
                     click_methods = [
+                        "react_fiber",
+                        "cdp_input",
                         "focus+space",
                         "focus+enter",
                         "scroll+mouse",
@@ -1714,23 +1717,113 @@ class TikTokUploader:
                         logger.info(f"Click attempt {method_idx+1}/{len(click_methods)}: {method_name}")
                         
                         try:
-                            if method_name == "focus+enter":
-                                # Focus button lalu tekan Enter — paling reliable untuk React
+                            if method_name == "react_fiber":
+                                # Langsung panggil React internal onClick handler
+                                result = await self.page.evaluate('''() => {
+                                    const buttons = document.querySelectorAll('button');
+                                    for (const btn of buttons) {
+                                        const text = btn.textContent.trim().toLowerCase();
+                                        if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                            btn.scrollIntoView({behavior: 'instant', block: 'center'});
+                                            // Cari React fiber key
+                                            const fiberKey = Object.keys(btn).find(k => 
+                                                k.startsWith('__reactFiber$') || 
+                                                k.startsWith('__reactInternalInstance$') ||
+                                                k.startsWith('__reactProps$')
+                                            );
+                                            if (fiberKey) {
+                                                // Coba via __reactProps$ dulu (React 18+)
+                                                const propsKey = Object.keys(btn).find(k => k.startsWith('__reactProps$'));
+                                                if (propsKey && btn[propsKey] && btn[propsKey].onClick) {
+                                                    btn[propsKey].onClick({
+                                                        preventDefault: () => {},
+                                                        stopPropagation: () => {},
+                                                        nativeEvent: new MouseEvent('click'),
+                                                        target: btn, currentTarget: btn,
+                                                        type: 'click', bubbles: true
+                                                    });
+                                                    return 'reactProps';
+                                                }
+                                                // Fallback: traverse fiber tree
+                                                const fibKey = Object.keys(btn).find(k => 
+                                                    k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$')
+                                                );
+                                                if (fibKey) {
+                                                    let fiber = btn[fibKey];
+                                                    let depth = 0;
+                                                    while (fiber && depth < 20) {
+                                                        if (fiber.memoizedProps && typeof fiber.memoizedProps.onClick === 'function') {
+                                                            fiber.memoizedProps.onClick({
+                                                                preventDefault: () => {},
+                                                                stopPropagation: () => {},
+                                                                nativeEvent: new MouseEvent('click'),
+                                                                target: btn, currentTarget: btn,
+                                                                type: 'click', bubbles: true
+                                                            });
+                                                            return 'reactFiber';
+                                                        }
+                                                        fiber = fiber.return;
+                                                        depth++;
+                                                    }
+                                                }
+                                            }
+                                            // Fallback: cari event handler via __reactEvents
+                                            const eventsKey = Object.keys(btn).find(k => k.startsWith('__reactEvents$'));
+                                            if (eventsKey) {
+                                                return 'hasEvents_noClick';
+                                            }
+                                            return 'noFiber';
+                                        }
+                                    }
+                                    return null;
+                                }''')
+                                logger.info(f"React fiber click result: {result}")
+                                if result and result in ('reactProps', 'reactFiber'):
+                                    logger.info(f"React internal onClick called via {result}")
+                                else:
+                                    continue
+                            
+                            elif method_name == "cdp_input":
+                                # CDP low-level Input events — bypasses all interception
                                 await post_button.scroll_into_view_if_needed()
                                 await asyncio.sleep(0.5)
-                                await post_button.focus()
-                                await asyncio.sleep(0.3)
-                                await self.page.keyboard.press("Enter")
-                                logger.info("Focused Post button and pressed Enter")
-                                
+                                box = await post_button.bounding_box()
+                                if box:
+                                    x = box['x'] + box['width'] / 2
+                                    y = box['y'] + box['height'] / 2
+                                    logger.info(f"CDP input at ({x:.0f}, {y:.0f})")
+                                    client = await self.page.context.new_cdp_session(self.page)
+                                    await client.send('Input.dispatchMouseEvent', {
+                                        'type': 'mousePressed', 'x': x, 'y': y,
+                                        'button': 'left', 'clickCount': 1,
+                                    })
+                                    await asyncio.sleep(0.1)
+                                    await client.send('Input.dispatchMouseEvent', {
+                                        'type': 'mouseReleased', 'x': x, 'y': y,
+                                        'button': 'left', 'clickCount': 1,
+                                    })
+                                    await client.detach()
+                                    logger.info("CDP mouse click dispatched")
+                                else:
+                                    continue
+                                    
                             elif method_name == "focus+space":
-                                # Focus + Space — alternatif keyboard
+                                # Focus + Space
                                 await post_button.scroll_into_view_if_needed()
                                 await asyncio.sleep(0.5)
                                 await post_button.focus()
                                 await asyncio.sleep(0.3)
                                 await self.page.keyboard.press("Space")
                                 logger.info("Focused Post button and pressed Space")
+                            
+                            elif method_name == "focus+enter":
+                                # Focus button lalu tekan Enter
+                                await post_button.scroll_into_view_if_needed()
+                                await asyncio.sleep(0.5)
+                                await post_button.focus()
+                                await asyncio.sleep(0.3)
+                                await self.page.keyboard.press("Enter")
+                                logger.info("Focused Post button and pressed Enter")
                             
                             elif method_name == "scroll+mouse":
                                 # Scroll ke button, ambil bounding box baru, klik mouse
@@ -1750,7 +1843,7 @@ class TikTokUploader:
                                     continue
                             
                             elif method_name == "js_click_direct":
-                                # JS: focus + click() — bypass semua event interception
+                                # JS: focus + click()
                                 result = await self.page.evaluate('''() => {
                                     const buttons = document.querySelectorAll('button');
                                     for (const btn of buttons) {
