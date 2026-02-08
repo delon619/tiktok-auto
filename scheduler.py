@@ -39,10 +39,19 @@ class VideoScheduler:
         """
         Posting video berikutnya dari queue
         """
-        # Cek lock
+        # Cek lock - scheduler's own lock
         if self.is_uploading:
             logger.warning("Upload sedang berjalan, skip scheduled job ini")
             return
+        
+        # Cek lock dari telegram bot /uploadnow
+        try:
+            from telegram_bot import _is_uploading as bot_uploading
+            if bot_uploading:
+                logger.warning("Bot /uploadnow sedang berjalan, skip scheduled job ini")
+                return
+        except Exception:
+            pass
         
         self.is_uploading = True
         

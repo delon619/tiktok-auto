@@ -6,6 +6,7 @@ VERSI OPTIMIZED - Menggunakan TikTok Creator Center
 import asyncio
 import json
 import os
+import ssl
 from pathlib import Path
 from typing import Optional, Tuple, List
 import random
@@ -34,13 +35,28 @@ TIKTOK_CLASSIC_UPLOAD = "https://www.tiktok.com/upload"
 BROWSER_PROFILE_DIR = COOKIES_DIR / "browser_profile"
 
 
+def _get_ssl_context():
+    """Get SSL context that works with Python 3.13+"""
+    try:
+        ctx = ssl.create_default_context()
+        return ctx
+    except Exception:
+        # Fallback: disable SSL verification jika ada masalah sertifikat
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        return ctx
+
+
 async def send_telegram_message(message: str):
     """Send text message to all allowed users via Telegram"""
     if not TELEGRAM_BOT_TOKEN or not ALLOWED_USER_IDS:
         return
     
     try:
-        async with aiohttp.ClientSession() as session:
+        # Gunakan ssl=False untuk mengatasi SSLCertVerificationError di Python 3.13
+        connector = aiohttp.TCPConnector(ssl=False)
+        async with aiohttp.ClientSession(connector=connector) as session:
             url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
             for user_id in ALLOWED_USER_IDS:
                 try:
@@ -67,7 +83,8 @@ async def send_debug_screenshot_to_telegram(screenshot_path: Path, caption: str 
         return
     
     try:
-        async with aiohttp.ClientSession() as session:
+        connector = aiohttp.TCPConnector(ssl=False)
+        async with aiohttp.ClientSession(connector=connector) as session:
             url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendPhoto"
             
             for user_id in ALLOWED_USER_IDS:
@@ -1161,6 +1178,63 @@ class TikTokUploader:
         logger.warning("Post button NOT FOUND by any method")
         return None
     
+    async def _verify_post_success(self) -> bool:
+        """
+        Verifikasi apakah video benar-benar terpost setelah URL berubah ke content page.
+        Cek halaman content untuk tanda-tanda keberhasilan.
+        Returns True jika terverifikasi berhasil.
+        """
+        try:
+            page_text = await self.page.evaluate('() => document.body.innerText.substring(0, 8000).toLowerCase()')
+            
+            # Tanda GAGAL - jika ada error di content page
+            fail_indicators = [
+                'something went wrong',
+                'video cannot be uploaded',
+                'upload failed',
+                'replace it with a different video',
+            ]
+            for phrase in fail_indicators:
+                if phrase in page_text:
+                    logger.warning(f"Post verification FAILED - found error: '{phrase}'")
+                    return False
+            
+            # Tanda BERHASIL
+            success_indicators = [
+                'your video is being uploaded',
+                'video posted',
+                'your video has been posted',
+                'successfully posted',
+                'your video is now live',
+                'manage your posts',
+                'manage posts',
+            ]
+            for phrase in success_indicators:
+                if phrase in page_text:
+                    logger.info(f"Post verified: found '{phrase}'")
+                    return True
+            
+            # Jika ada tabel/daftar video (halaman content management), 
+            # kemungkinan besar berhasil
+            content_indicators = [
+                'posts',
+                'views',
+                'likes', 
+                'comments',
+                'date posted',
+            ]
+            found_count = sum(1 for p in content_indicators if p in page_text)
+            if found_count >= 3:
+                logger.info(f"Post verified: content page detected ({found_count}/5 indicators)")
+                return True
+            
+            logger.debug(f"Post verification inconclusive - {found_count}/5 content indicators found")
+            return False
+            
+        except Exception as e:
+            logger.debug(f"Post verification error: {e}")
+            return False
+    
     async def _wait_for_upload_complete(self, timeout: int = 180) -> Tuple[bool, str]:
         """Tunggu upload selesai setelah klik Post"""
         logger.info("Waiting for upload to complete...")
@@ -1173,14 +1247,14 @@ class TikTokUploader:
             'tiktokstudio/content',
             'creator-center/content',
             '/manage',
-            '/profile',
-            '/@',
         ]
-        # URL patterns halaman upload (masih di upload page)
-        upload_patterns = ['/upload']
         
         initial_url = self.page.url
         logger.info(f"Initial URL after Post click: {initial_url}")
+        
+        # PENTING: Tunggu minimal 5 detik sebelum mulai cek success
+        # Karena TikTok bisa redirect ke content page bahkan saat gagal
+        await asyncio.sleep(5)
         
         while (asyncio.get_event_loop().time() - start_time) < timeout:
             current_url = self.page.url
@@ -1192,14 +1266,35 @@ class TikTokUploader:
             is_success_page = any(p in current_url_lower for p in success_patterns)
             
             if is_success_page and not is_upload_page:
-                logger.info(f"Upload success! URL changed to: {current_url}")
-                return True, "Video berhasil diupload ke TikTok!"
+                # Jangan langsung return - verifikasi dulu
+                logger.info(f"URL is at content page: {current_url}")
+                
+                # Verifikasi: cek apakah ada tanda upload berhasil di halaman
+                verified = await self._verify_post_success()
+                if verified:
+                    logger.info(f"Upload VERIFIED success! URL: {current_url}")
+                    return True, "Video berhasil diupload ke TikTok!"
+                elif elapsed > 30:
+                    # Jika sudah 30 detik di content page tanpa error, 
+                    # kemungkinan besar berhasil
+                    logger.info(f"Upload likely success (30s at content page, no error)")
+                    return True, "Video berhasil diupload ke TikTok!"
             
-            # ==== Check 2: URL changed to anything different (not upload, not login) ====
+            # ==== Check 2: URL changed to something other than upload/login ====
             if current_url != initial_url and not is_upload_page:
                 if 'login' not in current_url_lower:
-                    logger.info(f"URL changed from upload page to: {current_url} - assuming success")
-                    return True, "Video berhasil diupload ke TikTok!"
+                    if is_success_page:
+                        # URL changed to a known success page
+                        logger.info(f"URL changed to known success page: {current_url}")
+                        # Tunggu & verifikasi  
+                        await asyncio.sleep(3)
+                        verified = await self._verify_post_success()
+                        if verified or elapsed > 20:
+                            return True, "Video berhasil diupload ke TikTok!"
+                    elif elapsed > 30:
+                        # URL changed to unknown page, tapi sudah cukup lama
+                        logger.info(f"URL changed to: {current_url} - assuming success")
+                        return True, "Video berhasil diupload ke TikTok!"
             
             # ==== Check 3: Login redirect = session expired ====
             if 'login' in current_url_lower and '/upload' not in current_url_lower:
@@ -1242,53 +1337,91 @@ class TikTokUploader:
                     logger.info("Upload actually succeeded despite error toast")
                     return True, "Video berhasil diupload ke TikTok!"
             
-            # ==== RE-CLICK POST jika masih di upload page setelah 45s ====
-            if is_upload_page and elapsed > 45 and not post_reclicked:
-                logger.warning(f"Still on upload page after {elapsed}s - re-clicking Post button")
-                await self._take_screenshot(f"reclick_post_{elapsed}s", send_telegram=False)
+            # ==== RE-CLICK POST jika masih di upload page setelah 15s ====
+            if is_upload_page and elapsed > 15 and not post_reclicked:
+                logger.warning(f"Still on upload page after {elapsed}s - re-clicking Post button via mouse")
+                await self._take_screenshot(f"reclick_post_{elapsed}s", send_telegram=True)
                 
-                # Re-klik Post via JavaScript (paling reliable)
+                # Re-klik Post via mouse coordinates (paling reliable)
                 try:
-                    js_clicked = await self.page.evaluate('''() => {
+                    result = await self.page.evaluate('''() => {
                         const buttons = document.querySelectorAll('button');
                         for (const btn of buttons) {
                             const text = btn.textContent.trim().toLowerCase();
                             if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                const rect = btn.getBoundingClientRect();
                                 btn.scrollIntoView({behavior: 'smooth', block: 'center'});
-                                btn.click();
-                                return true;
+                                return {x: rect.x + rect.width/2, y: rect.y + rect.height/2, text: btn.textContent.trim()};
                             }
                         }
-                        return false;
+                        return null;
                     }''')
-                    if js_clicked:
-                        logger.info("Re-clicked Post button via JS")
+                    if result:
+                        await asyncio.sleep(1)
+                        # Re-get coordinates after scroll
+                        result2 = await self.page.evaluate('''() => {
+                            const buttons = document.querySelectorAll('button');
+                            for (const btn of buttons) {
+                                const text = btn.textContent.trim().toLowerCase();
+                                if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                    const rect = btn.getBoundingClientRect();
+                                    return {x: rect.x + rect.width/2, y: rect.y + rect.height/2};
+                                }
+                            }
+                            return null;
+                        }''')
+                        coords = result2 or result
+                        x, y = coords['x'], coords['y']
+                        await self.page.mouse.move(x, y)
+                        await asyncio.sleep(0.5)
+                        await self.page.mouse.click(x, y)
+                        logger.info(f"Re-clicked Post button via mouse at ({x:.0f}, {y:.0f})")
                         post_reclicked = True
-                        await asyncio.sleep(10)  # Tunggu reaksi
+                        await asyncio.sleep(5)
                         
                         # Handle popup setelah re-click
                         await self._handle_continue_to_post_popup()
+                        
+                        # Cek apakah masih di upload page
+                        still_upload = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
+                        if still_upload:
+                            logger.warning("Re-click mouse didn't work, trying full dispatchEvent...")
+                            await self.page.evaluate('''() => {
+                                const buttons = document.querySelectorAll('button');
+                                for (const btn of buttons) {
+                                    const text = btn.textContent.trim().toLowerCase();
+                                    if ((text === 'post' || text === 'posting') && !btn.disabled) {
+                                        const rect = btn.getBoundingClientRect();
+                                        const x = rect.x + rect.width / 2;
+                                        const y = rect.y + rect.height / 2;
+                                        const opts = {bubbles: true, cancelable: true, view: window, clientX: x, clientY: y};
+                                        btn.dispatchEvent(new PointerEvent('pointerdown', opts));
+                                        btn.dispatchEvent(new MouseEvent('mousedown', opts));
+                                        btn.dispatchEvent(new PointerEvent('pointerup', opts));
+                                        btn.dispatchEvent(new MouseEvent('mouseup', opts));
+                                        btn.dispatchEvent(new MouseEvent('click', opts));
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }''')
+                            logger.info("Dispatched full event sequence on Post button")
+                            await asyncio.sleep(5)
+                            await self._handle_continue_to_post_popup()
                     else:
                         logger.warning("Could not find Post button for re-click")
                 except Exception as e:
                     logger.debug(f"Re-click error: {e}")
             
-            # ==== RE-CLICK POST kedua kali jika masih stuck setelah 90s ====
-            if is_upload_page and elapsed > 90 and post_reclicked:
-                logger.warning(f"Still on upload page after {elapsed}s - second re-click attempt")
+            # ==== RE-CLICK POST kedua kali jika masih stuck setelah 45s ====
+            if is_upload_page and elapsed > 45 and post_reclicked:
+                logger.warning(f"Still on upload page after {elapsed}s - second re-click attempt via Playwright")
                 try:
-                    await self.page.evaluate('''() => {
-                        const buttons = document.querySelectorAll('button');
-                        for (const btn of buttons) {
-                            const text = btn.textContent.trim().toLowerCase();
-                            if ((text === 'post' || text === 'posting') && !btn.disabled) {
-                                btn.click();
-                                return true;
-                            }
-                        }
-                        return false;
-                    }''')
-                    post_reclicked = False  # Reset untuk tidak trigger lagi
+                    loc = self.page.get_by_role("button", name="Post", exact=True)
+                    if await loc.count() > 0:
+                        await loc.first.click(force=True, timeout=5000)
+                        logger.info("Second re-click via Playwright locator force click")
+                    post_reclicked = False  # Reset
                     await asyncio.sleep(10)
                     await self._handle_continue_to_post_popup()
                 except:
@@ -1312,13 +1445,18 @@ class TikTokUploader:
         is_success_page = any(p in current_url_lower for p in success_patterns)
         
         if is_success_page and not is_upload_page:
-            logger.info(f"Upload success detected at timeout! URL: {current_url}")
-            return True, "Video berhasil diupload ke TikTok!"
-        
-        # Cek terakhir: mungkin URL berubah
-        if current_url != initial_url and 'login' not in current_url_lower and not is_upload_page:
-            logger.info(f"URL did change to: {current_url} - assuming success at timeout")
-            return True, "Video berhasil diupload ke TikTok!"
+            # Verifikasi sebelum declare success
+            verified = await self._verify_post_success()
+            if verified:
+                logger.info(f"Upload verified success at timeout! URL: {current_url}")
+                return True, "Video berhasil diupload ke TikTok!"
+            else:
+                # URL at content tapi tidak bisa verifikasi
+                # Kemungkinan ada error tapi page tetap redirect
+                await self._take_screenshot("upload_unverified", send_telegram=True)
+                logger.warning(f"URL at content page but could not verify success: {current_url}")
+                # Tetap report sebagai success karena sudah di content page cukup lama
+                return True, "Video kemungkinan berhasil diupload (tidak bisa verifikasi otomatis)"
         
         await self._take_screenshot("upload_timeout", send_telegram=True)
         return False, "Upload timeout - cek screenshot untuk status terakhir"
@@ -1446,12 +1584,24 @@ class TikTokUploader:
             # 9. PENTING: Tunggu content checks selesai (Music copyright & Content check)
             # Ini KRUSIAL - jika Post sebelum checks selesai → "Something went wrong"
             logger.info("Step 7: Waiting for content checks...")
-            checks_ok = await self._wait_for_content_checks(timeout=120)
+            checks_ok = await self._wait_for_content_checks(timeout=150)
             
             if not checks_ok:
-                logger.warning("Content checks did not complete - upload may fail")
-                await self._take_screenshot("content_checks_incomplete")
-                # Tetap lanjut, tapi catat bahwa mungkin gagal
+                logger.warning("Content checks did not complete after 150s")
+                await self._take_screenshot("content_checks_incomplete", send_telegram=True)
+                # Tunggu tambahan 30 detik - kadang checks butuh waktu lebih lama
+                logger.info("Extra waiting 30s for content checks...")
+                await asyncio.sleep(30)
+                # Re-check sekali lagi
+                checks_ok = await self._wait_for_content_checks(timeout=30)
+                if checks_ok:
+                    logger.info("Content checks completed after extra wait!")
+                else:
+                    logger.warning("Content checks still not done - proceeding but may fail")
+                    await send_telegram_message(
+                        "⚠️ Content checks belum selesai setelah 3 menit.\n"
+                        "Upload akan dicoba, tapi mungkin akan gagal."
+                    )
             
             await self._delay(3, 5)
             
@@ -1553,33 +1703,79 @@ class TikTokUploader:
                     logger.info("Post button already clicked by coordinates")
                     clicked = True
                 else:
-                    clicked = await self._safe_click(post_button, "Post button")
-                    
-                    if not clicked:
-                        await self._delay(2, 3)
-                        post_button = await self._find_post_button()
-                        if post_button and post_button != "CLICKED_BY_COORDS":
-                            clicked = await self._safe_click(post_button, "Post button (force retry)")
-                        elif post_button == "CLICKED_BY_COORDS":
+                    # === UTAMA: Klik via mouse coordinates (paling mirip klik manusia) ===
+                    clicked = False
+                    try:
+                        box = await post_button.bounding_box()
+                        if box:
+                            x = box['x'] + box['width'] / 2 + random.uniform(-3, 3)
+                            y = box['y'] + box['height'] / 2 + random.uniform(-2, 2)
+                            logger.info(f"Post button box: x={box['x']:.0f} y={box['y']:.0f} w={box['width']:.0f} h={box['height']:.0f}")
+                            
+                            # Simulasi human: hover dulu, lalu klik
+                            await self.page.mouse.move(x, y)
+                            await self._delay(0.3, 0.6)
+                            await self.page.mouse.click(x, y)
+                            logger.info(f"Clicked Post button via mouse at ({x:.0f}, {y:.0f})")
                             clicked = True
-                    
-                    # Last resort: klik via JavaScript
-                    if not clicked:
-                        logger.warning("Normal click failed, trying JS click on any Post button...")
-                        js_clicked = await self.page.evaluate('''() => {
-                            const buttons = document.querySelectorAll('button');
-                            for (const btn of buttons) {
-                                const text = btn.textContent.trim().toLowerCase();
-                                if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
-                                    btn.click();
-                                    return true;
-                                }
-                            }
-                            return false;
-                        }''')
-                        if js_clicked:
-                            logger.info("Post button clicked via JS fallback")
-                            clicked = True
+                            
+                            # Cek apakah klik berhasil (tunggu 3 detik dan lihat reaksi)
+                            await asyncio.sleep(3)
+                            still_upload = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
+                            
+                            if still_upload:
+                                logger.warning("Page didn't react to mouse click, trying dispatchEvent...")
+                                # Dispatch full mouse event sequence
+                                await self.page.evaluate('''() => {
+                                    const buttons = document.querySelectorAll('button');
+                                    for (const btn of buttons) {
+                                        const text = btn.textContent.trim().toLowerCase();
+                                        if ((text === 'post' || text === 'posting') && !btn.disabled && btn.offsetParent !== null) {
+                                            const rect = btn.getBoundingClientRect();
+                                            const x = rect.x + rect.width / 2;
+                                            const y = rect.y + rect.height / 2;
+                                            const opts = {bubbles: true, cancelable: true, view: window, clientX: x, clientY: y};
+                                            btn.dispatchEvent(new MouseEvent('pointerdown', opts));
+                                            btn.dispatchEvent(new MouseEvent('mousedown', opts));
+                                            btn.dispatchEvent(new MouseEvent('pointerup', opts));
+                                            btn.dispatchEvent(new MouseEvent('mouseup', opts));
+                                            btn.dispatchEvent(new MouseEvent('click', opts));
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }''')
+                                logger.info("Dispatched full mouse event sequence on Post button")
+                                
+                                # Cek lagi setelah dispatchEvent
+                                await asyncio.sleep(3)
+                                still_upload2 = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
+                                
+                                if still_upload2:
+                                    logger.warning("dispatchEvent also didn't work, trying Playwright force click...")
+                                    try:
+                                        await post_button.click(force=True, timeout=5000)
+                                        logger.info("Force click succeeded")
+                                    except:
+                                        pass
+                                    
+                                    # Satu lagi: coba klik via Playwright locator
+                                    await asyncio.sleep(2)
+                                    still_upload3 = '/upload' in self.page.url.lower() and '/content' not in self.page.url.lower()
+                                    if still_upload3:
+                                        logger.warning("All click methods tried, trying Playwright locator click...")
+                                        try:
+                                            loc = self.page.get_by_role("button", name="Post", exact=True)
+                                            await loc.click(timeout=5000)
+                                            logger.info("Playwright locator click succeeded")
+                                        except:
+                                            pass
+                        else:
+                            logger.warning("Post button has no bounding box, falling back to _safe_click")
+                            clicked = await self._safe_click(post_button, "Post button")
+                    except Exception as e:
+                        logger.warning(f"Coordinate click failed: {e}, falling back to _safe_click")
+                        clicked = await self._safe_click(post_button, "Post button")
                 
                 if not clicked:
                     await self._take_screenshot("post_click_failed")

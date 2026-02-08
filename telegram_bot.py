@@ -5,6 +5,7 @@ Video akan disimpan ke folder dan dimasukkan ke queue database
 import os
 import asyncio
 import logging
+import traceback
 from datetime import datetime
 from pathlib import Path
 
@@ -29,6 +30,9 @@ from logger_setup import setup_logger
 
 logger = setup_logger("telegram_bot")
 
+# Global upload lock - mencegah concurrent upload dari /uploadnow dan scheduler
+_upload_lock = asyncio.Lock()
+_is_uploading = False
 
 def is_authorized(user_id: int) -> bool:
     """Cek apakah user diizinkan menggunakan bot"""
@@ -277,10 +281,35 @@ async def queue_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handler untuk /uploadnow - trigger upload manual tanpa menunggu jadwal"""
+    global _is_uploading
+    
     if not is_authorized(update.effective_user.id):
+        await update.message.reply_text("⛔ Kamu tidak diizinkan menggunakan bot ini.")
+        logger.warning(f"Unauthorized /uploadnow from user {update.effective_user.id}")
         return
     
     user_id = update.effective_user.id
+    logger.info(f"/uploadnow command received from user {user_id}")
+    
+    # Cek apakah sedang ada upload berjalan
+    if _is_uploading:
+        await update.message.reply_text(
+            "⏳ Upload sedang berjalan. Tunggu sampai selesai sebelum upload lagi."
+        )
+        logger.warning(f"Upload already in progress, rejecting /uploadnow from {user_id}")
+        return
+    
+    # Cek juga scheduler lock
+    try:
+        from scheduler import scheduler as sched
+        if sched.is_uploading:
+            await update.message.reply_text(
+                "⏳ Scheduler sedang mengupload video. Tunggu sampai selesai."
+            )
+            logger.warning("Scheduler is uploading, rejecting /uploadnow")
+            return
+    except Exception:
+        pass
     
     # Cek apakah ada video pending
     pending_count = db.get_pending_count()
@@ -300,13 +329,23 @@ async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"🚀 *Memulai upload manual...*\n\n"
         f"📁 File: `{next_video['filename']}`\n"
         f"📝 Caption: {next_video['caption'][:50] if next_video['caption'] else 'Default'}...\n\n"
-        f"⏳ Proses upload dimulai, mohon tunggu...",
+        f"⏳ Proses upload dimulai, mohon tunggu (bisa 2-5 menit)...",
         parse_mode="Markdown"
     )
     
     logger.info(f"Manual upload triggered by user {user_id} for video: {next_video['filename']}")
     
-    # Import dan jalankan uploader
+    # Jalankan upload sebagai background task agar tidak memblokir bot
+    asyncio.create_task(
+        _do_upload(update, next_video, pending_count)
+    )
+
+
+async def _do_upload(update: Update, next_video: dict, pending_count: int):
+    """Background task untuk menjalankan upload - tidak memblokir bot handler"""
+    global _is_uploading
+    _is_uploading = True
+    
     try:
         from tiktok_uploader import upload_single_video
         
@@ -320,8 +359,14 @@ async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         if not video_path.exists():
             db.update_status(next_video["id"], STATUS_FAILED, "File tidak ditemukan")
-            await update.message.reply_text(f"❌ File tidak ditemukan: `{next_video['filename']}`", parse_mode="Markdown")
+            await update.message.reply_text(
+                f"❌ File tidak ditemukan: `{next_video['filename']}`", 
+                parse_mode="Markdown"
+            )
+            logger.error(f"File not found: {next_video['filepath']}")
             return
+        
+        logger.info(f"Starting upload_single_video for: {video_path}")
         
         # Jalankan upload
         success, message = await upload_single_video(str(video_path), caption)
@@ -344,15 +389,24 @@ async def uploadnow_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"Gunakan /debug untuk lihat screenshot error.",
                 parse_mode="Markdown"
             )
-            logger.error(f"Manual upload failed: {next_video['filename']}")
+            logger.error(f"Manual upload failed: {next_video['filename']} - {message}")
             
     except Exception as e:
-        logger.error(f"Error during manual upload: {e}")
-        db.update_status(next_video["id"], STATUS_FAILED, str(e))
-        await update.message.reply_text(
-            f"❌ *Error saat upload:*\n`{str(e)[:200]}`",
-            parse_mode="Markdown"
-        )
+        logger.error(f"Error during manual upload: {e}\n{traceback.format_exc()}")
+        try:
+            db.update_status(next_video["id"], STATUS_FAILED, str(e)[:200])
+        except Exception:
+            pass
+        try:
+            await update.message.reply_text(
+                f"❌ *Error saat upload:*\n`{str(e)[:200]}`",
+                parse_mode="Markdown"
+            )
+        except Exception:
+            pass
+    finally:
+        _is_uploading = False
+        logger.info("Upload lock released")
 
 
 async def handle_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
