@@ -235,10 +235,12 @@ class TikTokUploader:
         viewport_width = random.randint(1280, 1400)
         viewport_height = random.randint(750, 850)
         
+        # User agents Chrome terbaru (Desember 2025 - Februari 2026)
         user_agents = [
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
         ]
         
         self.context = await self._playwright.chromium.launch_persistent_context(
@@ -258,30 +260,89 @@ class TikTokUploader:
                 '--disable-gpu',
                 '--window-size=1366,768',
                 '--start-maximized',
+                '--disable-features=IsolateOrigins,site-per-process',
+                '--disable-web-security',
+                '--allow-running-insecure-content',
             ],
             ignore_default_args=['--enable-automation'],
         )
         
-        # Anti-detection script
+        # Anti-detection script - comprehensive stealth
         await self.context.add_init_script("""
+            // === Core: webdriver property ===
             Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-            window.chrome = { runtime: {}, loadTimes: function() {}, csi: function() {}, app: {} };
+            
+            // === Chrome object ===
+            window.chrome = {
+                runtime: { 
+                    onMessage: { addListener: function() {}, removeListener: function() {} },
+                    sendMessage: function() {},
+                    connect: function() { return { onMessage: { addListener: function() {} } }; },
+                    PlatformOs: {MAC: 'mac', WIN: 'win', ANDROID: 'android', CROS: 'cros', LINUX: 'linux', OPENBSD: 'openbsd'},
+                    PlatformArch: {ARM: 'arm', X86_32: 'x86-32', X86_64: 'x86-64', MIPS: 'mips', MIPS64: 'mips64'},
+                    PlatformNaclArch: {ARM: 'arm', X86_32: 'x86-32', X86_64: 'x86-64', MIPS: 'mips', MIPS64: 'mips64'},
+                    RequestUpdateCheckStatus: {THROTTLED: 'throttled', NO_UPDATE: 'no_update', UPDATE_AVAILABLE: 'update_available'},
+                    OnInstalledReason: {INSTALL: 'install', UPDATE: 'update', CHROME_UPDATE: 'chrome_update', SHARED_MODULE_UPDATE: 'shared_module_update'},
+                    OnRestartRequiredReason: {APP_UPDATE: 'app_update', OS_UPDATE: 'os_update', PERIODIC: 'periodic'},
+                },
+                loadTimes: function() { return {}; },
+                csi: function() { return {}; },
+                app: { isInstalled: false, InstallState: { DISABLED: 'disabled', INSTALLED: 'installed', NOT_INSTALLED: 'not_installed' }, RunningState: { CANNOT_RUN: 'cannot_run', READY_TO_RUN: 'ready_to_run', RUNNING: 'running' } }
+            };
+            
+            // === Plugins ===
             Object.defineProperty(navigator, 'plugins', {
                 get: () => {
-                    const plugins = [{name: 'Chrome PDF Plugin'}, {name: 'Chrome PDF Viewer'}, {name: 'Native Client'}];
+                    const plugins = [
+                        {name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer', description: 'Portable Document Format', length: 1},
+                        {name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', description: '', length: 1},
+                        {name: 'Native Client', filename: 'internal-nacl-plugin', description: '', length: 2},
+                    ];
                     plugins.item = (i) => plugins[i];
                     plugins.namedItem = (n) => plugins.find(p => p.name === n);
+                    plugins.refresh = () => {};
                     return plugins;
                 }
             });
+            
+            // === Navigator properties ===
             Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en', 'id'] });
             Object.defineProperty(navigator, 'hardwareConcurrency', { get: () => 8 });
             Object.defineProperty(navigator, 'deviceMemory', { get: () => 8 });
+            Object.defineProperty(navigator, 'maxTouchPoints', { get: () => 0 });
+            Object.defineProperty(navigator, 'platform', { get: () => 'Win32' });
             
-            // Remove automation indicators
+            // === Permissions ===
+            const originalQuery = window.navigator.permissions.query;
+            window.navigator.permissions.query = (parameters) => (
+                parameters.name === 'notifications' ?
+                    Promise.resolve({ state: Notification.permission }) :
+                    originalQuery(parameters)
+            );
+            
+            // === WebGL vendor/renderer (penting untuk fingerprint) ===
+            const getParameterOrig = WebGLRenderingContext.prototype.getParameter;
+            WebGLRenderingContext.prototype.getParameter = function(parameter) {
+                if (parameter === 37445) return 'Google Inc. (NVIDIA)';
+                if (parameter === 37446) return 'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11)';
+                return getParameterOrig.call(this, parameter);
+            };
+            const getParameterOrig2 = WebGL2RenderingContext.prototype.getParameter;
+            WebGL2RenderingContext.prototype.getParameter = function(parameter) {
+                if (parameter === 37445) return 'Google Inc. (NVIDIA)';
+                if (parameter === 37446) return 'ANGLE (NVIDIA, NVIDIA GeForce GTX 1650 Direct3D11 vs_5_0 ps_5_0, D3D11)';
+                return getParameterOrig2.call(this, parameter);
+            };
+            
+            // === Remove automation indicators ===
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
+            
+            // === Prevent iframe detection ===
+            Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
+                get: function() { return window; }
+            });
         """)
         
         # Load cookies
@@ -298,6 +359,23 @@ class TikTokUploader:
         self.page.set_default_timeout(30000)
         
         await self._delay(1, 2)
+        
+        # Warm-up: kunjungi TikTok Studio home dulu sebelum upload
+        # Ini membuat browsing pattern lebih natural
+        try:
+            logger.info("Warming up: visiting TikTok Studio home...")
+            await self.page.goto('https://www.tiktok.com/tiktokstudio', wait_until='domcontentloaded', timeout=30000)
+            await self._delay(3, 6)
+            
+            # Simulasi browsing natural: scroll sedikit
+            await self.page.evaluate('() => window.scrollBy(0, Math.random() * 300 + 100)')
+            await self._delay(2, 4)
+            await self.page.evaluate('() => window.scrollBy(0, -(Math.random() * 100 + 50))')
+            await self._delay(1, 3)
+            logger.info("Warm-up completed")
+        except Exception as e:
+            logger.debug(f"Warm-up failed (non-critical): {e}")
+        
         logger.info("Browser initialized")
     
     async def _close_browser(self):
@@ -1592,17 +1670,27 @@ class TikTokUploader:
             
             await self._delay(3, 5)
             
-            # 10. Simulasi human behavior
-            logger.info("Simulating human behavior...")
+            # 10. Simulasi human behavior + warm-up sebelum Post
+            logger.info("Simulating human behavior before Post...")
             await self._simulate_human_behavior()
+            await self._delay(2, 4)
+            
+            # Extra warm-up: scroll pelan ke area Post button supaya terlihat natural
+            await self.page.evaluate('''() => {
+                window.scrollTo({top: document.body.scrollHeight * 0.7, behavior: "smooth"});
+            }''')
             await self._delay(2, 3)
+            await self.page.evaluate('''() => {
+                window.scrollTo({top: document.body.scrollHeight, behavior: "smooth"});
+            }''')
+            await self._delay(3, 5)
             
             # 11. Screenshot sebelum post
             await self._take_screenshot("04_before_post", send_telegram=True)
             
             # 12. POST dengan retry loop
             # TikTok sering menampilkan "Something went wrong" yang bisa di-retry
-            max_post_attempts = 3
+            max_post_attempts = 5
             post_success = False
             
             for post_attempt in range(max_post_attempts):
@@ -1937,25 +2025,38 @@ class TikTokUploader:
                 
                 if error_detected:
                     logger.warning(f"'Something went wrong' detected on attempt {post_attempt + 1}")
-                    await self._take_screenshot(f"error_attempt_{post_attempt + 1}")
+                    await self._take_screenshot(f"error_attempt_{post_attempt + 1}", send_telegram=True)
                     await self._dismiss_error_toast()
                     
                     if post_attempt < max_post_attempts - 1:
-                        # Tunggu sebelum retry - semakin lama tiap retry
-                        wait_time = 15 * (post_attempt + 1)  # 15s, 30s
+                        # Tunggu lebih lama sebelum retry
+                        wait_time = 20 * (post_attempt + 1)  # 20s, 40s
                         logger.info(f"Waiting {wait_time}s before retry...")
-                        await self._delay(wait_time, wait_time + 5)
+                        await self._delay(wait_time, wait_time + 10)
+                        
+                        # Reload halaman untuk fresh state
+                        logger.info("Reloading page for fresh retry...")
+                        await self.page.reload(wait_until='domcontentloaded', timeout=30000)
+                        await self._delay(5, 8)
                         
                         # Tunggu content checks lagi sebelum retry
                         logger.info("Re-checking content checks before retry...")
-                        await self._wait_for_content_checks(timeout=60)
+                        await self._wait_for_content_checks(timeout=90)
                         await self._delay(3, 5)
+                        
+                        # Human behavior sebelum retry
                         await self._simulate_human_behavior()
-                        await self._delay(2, 3)
+                        await self._delay(3, 5)
+                        
+                        # Scroll pelan ke Post button area
+                        await self.page.evaluate('''() => {
+                            window.scrollTo({top: document.body.scrollHeight, behavior: "smooth"});
+                        }''')
+                        await self._delay(3, 5)
                         continue
                     else:
                         # Semua attempt gagal
-                        await self._take_screenshot("all_post_attempts_failed")
+                        await self._take_screenshot("all_post_attempts_failed", send_telegram=True)
                         return False, "Upload gagal: 'Something went wrong' setelah 3x retry. Video mungkin bermasalah."
                 else:
                     # Tidak ada error → Post berhasil diklik

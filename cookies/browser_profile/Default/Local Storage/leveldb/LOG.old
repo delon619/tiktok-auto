@@ -1,3 +1,5 @@
-2026/02/08-16:32:32.299 1a4c Reusing MANIFEST C:\Users\Delon\apaaja\tiktok-auto #2\cookies\browser_profile\Default\Local Storage\leveldb/MANIFEST-000001
-2026/02/08-16:32:32.306 1a4c Recovering log #23
-2026/02/08-16:32:32.310 1a4c Reusing old log C:\Users\Delon\apaaja\tiktok-auto #2\cookies\browser_profile\Default\Local Storage\leveldb/000023.log 
+2026/02/08-17:41:50.337 73c Reusing MANIFEST C:\Users\Delon\apaaja\tiktok-auto #2\cookies\browser_profile\Default\Local Storage\leveldb/MANIFEST-000001
+2026/02/08-17:41:50.345 73c Recovering log #23
+2026/02/08-17:41:50.346 73c Level-0 table #27: started
+2026/02/08-17:41:50.359 73c Level-0 table #27: 20619 bytes OK
+2026/02/08-17:41:50.367 73c Delete type=0 #23
